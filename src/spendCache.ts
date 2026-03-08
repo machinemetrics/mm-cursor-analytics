@@ -1,33 +1,25 @@
 import * as vscode from 'vscode';
-import { fetchUsageEventsSince } from './spendFetcher';
+import { fetchUsageEventsSince, fetchBillingPeriodStart } from './spendFetcher';
 import { log } from './logger';
 
-// Stored in globalState under this key
 const CACHE_KEY = 'mmSpendCache';
+// Refresh billing period start once per day
+const BILLING_PERIOD_TTL_MS = 24 * 60 * 60 * 1000;
 
 interface SpendCache {
   // YYYY-MM-DD -> total charged dollars for that day
   days: Record<string, number>;
   // ms timestamp of the last event we've processed
   lastEventTimestamp: number;
+  // ms timestamp of billing period start (from /api/usage)
+  billingPeriodStartMs: number;
+  // when we last fetched the billing period start
+  billingPeriodFetchedAt: number;
 }
 
 function todayKey(): string {
   const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-function monthPrefix(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-}
-
-function startOfMonthMs(): number {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), 1, 0, 0, 0, 0).getTime();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 function startOfTodayMs(): number {
@@ -36,7 +28,12 @@ function startOfTodayMs(): number {
 }
 
 function loadCache(ctx: vscode.ExtensionContext): SpendCache {
-  return ctx.globalState.get<SpendCache>(CACHE_KEY) ?? { days: {}, lastEventTimestamp: 0 };
+  return ctx.globalState.get<SpendCache>(CACHE_KEY) ?? {
+    days: {},
+    lastEventTimestamp: 0,
+    billingPeriodStartMs: 0,
+    billingPeriodFetchedAt: 0,
+  };
 }
 
 async function saveCache(ctx: vscode.ExtensionContext, cache: SpendCache): Promise<void> {
@@ -45,27 +42,48 @@ async function saveCache(ctx: vscode.ExtensionContext, cache: SpendCache): Promi
 
 /**
  * Refresh spend data incrementally:
- * - On first run (no cache): fetches all events since start of month
+ * - Fetches the billing period start from /api/usage (cached 24h)
+ * - On first run: fetches all events since billing period start
  * - On subsequent runs: fetches only events since last processed timestamp
- * - Today's bucket is always recalculated from today's events to stay current
+ *   (but always re-fetches today in full)
  */
 export async function refreshSpend(ctx: vscode.ExtensionContext): Promise<void> {
   const cache = loadCache(ctx);
   const now = Date.now();
 
+  // Refresh billing period start if stale or missing
+  if (!cache.billingPeriodStartMs || (now - cache.billingPeriodFetchedAt) > BILLING_PERIOD_TTL_MS) {
+    try {
+      cache.billingPeriodStartMs = await fetchBillingPeriodStart();
+      cache.billingPeriodFetchedAt = now;
+      log(`Billing period start updated: ${new Date(cache.billingPeriodStartMs).toISOString()}`);
+      // If billing period changed (rolled over), reset event cache
+      if (cache.lastEventTimestamp < cache.billingPeriodStartMs) {
+        log('Billing period rolled over — resetting event cache');
+        cache.days = {};
+        cache.lastEventTimestamp = 0;
+      }
+    } catch (e) {
+      log(`Failed to fetch billing period start: ${e}`);
+      // Fall back to start of today if we have nothing
+      if (!cache.billingPeriodStartMs) {
+        cache.billingPeriodStartMs = startOfTodayMs();
+      }
+    }
+  }
+
   const todayStart = startOfTodayMs();
   const fetchFrom = cache.lastEventTimestamp > 0
     ? Math.min(cache.lastEventTimestamp + 1, todayStart)
-    : startOfMonthMs();
+    : cache.billingPeriodStartMs;
 
   log(`Fetching events from ${new Date(fetchFrom).toISOString()} to ${new Date(now).toISOString()}`);
   log(`Cache state: lastEventTimestamp=${cache.lastEventTimestamp}, days=${JSON.stringify(Object.keys(cache.days))}`);
 
   const events = await fetchUsageEventsSince(fetchFrom, now);
   log(`Fetched ${events.length} events`);
-  if (events.length === 0) return;
 
-  // Clear today's bucket — we re-accumulate it fresh each time
+  // Clear today's bucket — re-accumulate fresh each time
   const today = todayKey();
   delete cache.days[today];
 
@@ -74,16 +92,17 @@ export async function refreshSpend(ctx: vscode.ExtensionContext): Promise<void> 
     cache.days[e.date] = (cache.days[e.date] ?? 0) + dollars;
   }
 
-  // Track the latest timestamp we've seen so next fetch starts from here
-  const maxTs = Math.max(...events.map(e => e.timestamp));
-  if (maxTs > cache.lastEventTimestamp) {
-    cache.lastEventTimestamp = maxTs;
+  if (events.length > 0) {
+    const maxTs = Math.max(...events.map(e => e.timestamp));
+    if (maxTs > cache.lastEventTimestamp) {
+      cache.lastEventTimestamp = maxTs;
+    }
   }
 
-  // Prune entries older than the current month to avoid unbounded growth
-  const prefix = monthPrefix();
+  // Prune days before the billing period start
+  const billingStartDate = toLocalDate(cache.billingPeriodStartMs);
   for (const key of Object.keys(cache.days)) {
-    if (!key.startsWith(prefix)) {
+    if (key < billingStartDate) {
       delete cache.days[key];
     }
   }
@@ -97,16 +116,21 @@ export async function clearSpendCache(ctx: vscode.ExtensionContext): Promise<voi
 
 export function getSpendSummary(ctx: vscode.ExtensionContext): { today: number; month: number } {
   const cache = loadCache(ctx);
-  const prefix = monthPrefix();
   const today = todayKey();
+  const billingStartDate = cache.billingPeriodStartMs ? toLocalDate(cache.billingPeriodStartMs) : '1970-01-01';
 
   let month = 0;
   for (const [key, val] of Object.entries(cache.days)) {
-    if (key.startsWith(prefix)) month += val;
+    if (key >= billingStartDate) month += val;
   }
 
   return {
     today: cache.days[today] ?? 0,
     month,
   };
+}
+
+function toLocalDate(tsMs: number): string {
+  const d = new Date(tsMs);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }

@@ -132,6 +132,46 @@ function toLocalDate(tsMs: number): string {
   return `${y}-${m}-${day}`;
 }
 
+function getJson(url: string, cookie: string): Promise<unknown> {
+  return new Promise((resolve, reject) => {
+    const parsed = new URL(url);
+    const req = https.request({
+      hostname: parsed.hostname,
+      port: 443,
+      path: parsed.pathname + parsed.search,
+      method: 'GET',
+      headers: {
+        'Cookie': `WorkosCursorSessionToken=${cookie}`,
+        'Origin': 'https://cursor.com',
+        'User-Agent': 'Mozilla/5.0',
+      },
+    }, (res) => {
+      let data = '';
+      res.on('data', (chunk: Buffer | string) => (data += chunk));
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)); } catch { reject(new Error(`Bad JSON: ${data.slice(0, 200)}`)); }
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(15000, () => { req.destroy(); reject(new Error('Request timed out')); });
+    req.end();
+  });
+}
+
+export async function fetchBillingPeriodStart(): Promise<number> {
+  const token = await readAccessToken();
+  if (!token) throw new Error('No Cursor access token found');
+  const userId = extractUserId(token);
+  if (!userId) throw new Error('Could not extract user ID from token');
+  const cookie = `${userId}%3A%3A${token}`;
+  const resp = await getJson(`https://cursor.com/api/usage?user=${userId}`, cookie) as Record<string, unknown>;
+  const startOfMonth = resp['startOfMonth'];
+  if (typeof startOfMonth !== 'string') throw new Error(`Unexpected usage response: ${JSON.stringify(resp).slice(0, 200)}`);
+  const ms = new Date(startOfMonth).getTime();
+  log(`Billing period start: ${startOfMonth} (${ms})`);
+  return ms;
+}
+
 interface RawEvent {
   timestamp: string;
   chargedCents?: number;
