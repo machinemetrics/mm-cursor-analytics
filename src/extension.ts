@@ -107,6 +107,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(spendBar.disposable);
 
   context.subscriptions.push(
+    vscode.commands.registerCommand('mmCursorAnalytics.showMenu', async () => {
+      const choice = await vscode.window.showQuickPick(
+        [
+          { label: '$(refresh) Refresh Spend Data', command: 'mmCursorAnalytics.refreshSpend' },
+          { label: '$(trash) Clear Spend Cache', command: 'mmCursorAnalytics.clearSpendCache' },
+        ],
+        { placeHolder: 'MM Cursor Spend' }
+      );
+      if (choice) {
+        vscode.commands.executeCommand(choice.command);
+      }
+    })
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand('mmCursorAnalytics.refreshSpend', () => {
       spendBar.refresh();
     })
@@ -115,8 +130,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.commands.registerCommand('mmCursorAnalytics.clearSpendCache', async () => {
       await clearSpendCache(context);
-      spendBar.refresh();
       vscode.window.showInformationMessage('MM: Spend cache cleared. Refetching...');
+      spendBar.refresh();
     })
   );
 }

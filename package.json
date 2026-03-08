@@ -17,6 +17,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "mmCursorAnalytics.showMenu",
+        "title": "MM: Show Spend Menu"
+      },
+      {
         "command": "mmCursorAnalytics.refreshSpend",
         "title": "MM: Refresh Spend Data"
       },

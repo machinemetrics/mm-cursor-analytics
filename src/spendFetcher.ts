@@ -2,6 +2,7 @@ import * as https from 'https';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
+import { log } from './statusBar';
 
 export interface UsageEvent {
   timestamp: number; // ms
@@ -122,11 +123,14 @@ interface EventsResponse {
 }
 
 export async function fetchUsageEventsSince(startMs: number, endMs: number): Promise<UsageEvent[]> {
+  log('Reading access token from DB...');
   const token = await readAccessToken();
   if (!token) throw new Error('No Cursor access token found');
+  log(`Token read OK (length=${token.length})`);
 
   const userId = extractUserId(token);
   if (!userId) throw new Error('Could not extract user ID from token');
+  log(`User ID: ${userId}`);
 
   const cookie = `${userId}%3A%3A${token}`;
   const PAGE_SIZE = 500;
@@ -134,13 +138,20 @@ export async function fetchUsageEventsSince(startMs: number, endMs: number): Pro
   let page = 1;
 
   while (true) {
+    log(`Fetching page ${page}...`);
     const resp = await postJson(
       'https://cursor.com/api/dashboard/get-filtered-usage-events',
       { teamId: 0, startDate: String(startMs), endDate: String(endMs), page, pageSize: PAGE_SIZE },
       cookie
     ) as EventsResponse;
 
+    if ((resp as Record<string, unknown>)['error']) {
+      throw new Error(`API error: ${JSON.stringify(resp)}`);
+    }
+
     const events = resp.usageEventsDisplay ?? [];
+    log(`Page ${page}: got ${events.length} events, total=${resp.totalUsageEventsCount ?? '?'}`);
+
     for (const e of events) {
       const ts = parseInt(e.timestamp, 10);
       all.push({
@@ -155,5 +166,6 @@ export async function fetchUsageEventsSince(startMs: number, endMs: number): Pro
     page++;
   }
 
+  log(`Total events fetched: ${all.length}, total chargedCents: ${all.reduce((s, e) => s + e.chargedCents, 0).toFixed(2)}`);
   return all;
 }

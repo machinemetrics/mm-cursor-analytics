@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { fetchUsageEventsSince } from './spendFetcher';
+import { log } from './statusBar';
 
 // Stored in globalState under this key
 const CACHE_KEY = 'mmSpendCache';
@@ -52,14 +53,16 @@ export async function refreshSpend(ctx: vscode.ExtensionContext): Promise<void> 
   const cache = loadCache(ctx);
   const now = Date.now();
 
-  // Start from the later of: start of month, or last event timestamp + 1ms
-  // Always re-fetch today in full to pick up events since last run
   const todayStart = startOfTodayMs();
   const fetchFrom = cache.lastEventTimestamp > 0
     ? Math.min(cache.lastEventTimestamp + 1, todayStart)
     : startOfMonthMs();
 
+  log(`Fetching events from ${new Date(fetchFrom).toISOString()} to ${new Date(now).toISOString()}`);
+  log(`Cache state: lastEventTimestamp=${cache.lastEventTimestamp}, days=${JSON.stringify(Object.keys(cache.days))}`);
+
   const events = await fetchUsageEventsSince(fetchFrom, now);
+  log(`Fetched ${events.length} events`);
   if (events.length === 0) return;
 
   // Clear today's bucket — we re-accumulate it fresh each time
