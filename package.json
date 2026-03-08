@@ -1,6 +1,6 @@
 {
   "name": "mm-cursor-analytics",
-  "displayName": "Cursor Expensive Model Indicator",
+  "displayName": "MM Cursor Expensive Model Indicator",
   "publisher": "mm-cursor-analytics",
   "description": "Turns the title bar red when using an expensive AI model in Cursor",
   "version": "0.1.0",
@@ -16,7 +16,7 @@
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Cursor Expensive Model Indicator",
+      "title": "MM Cursor Expensive Model Indicator",
       "properties": {
         "cursorExpensiveModelIndicator.tiersUrl": {
           "type": "string",

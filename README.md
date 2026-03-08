@@ -1,4 +1,4 @@
-# Cursor Expensive Model Indicator
+# MM Cursor Expensive Model Indicator
 
 A VS Code extension that turns the **title bar red** when you're using an expensive AI model in Cursor. When you switch to a cheaper model, it restores your original theme.
 
