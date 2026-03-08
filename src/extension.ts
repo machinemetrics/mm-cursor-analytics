@@ -3,7 +3,7 @@ import { getCursorStateDbPath, getActiveModelsFromState } from './modelDetector'
 import { fetchModelData, resolveModel, isExpensiveModel, type ModelData } from './tierFetcher';
 import { createSpendStatusBar } from './statusBar';
 import { clearSpendCache } from './spendCache';
-import { outputChannel } from './logger';
+import { outputChannel, log } from './logger';
 
 const TITLEBAR_KEY = 'titleBar.activeBackground';
 const RED_VALUE = '#cc0000';
@@ -12,11 +12,15 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 let pollIntervalId: ReturnType<typeof setInterval> | undefined;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  context.subscriptions.push(outputChannel);
+  log('MM Cursor Analytics activating...');
+
   const config = vscode.workspace.getConfiguration('cursorExpensiveModelIndicator');
   const tiersUrl = config.get<string>('tiersUrl', '');
   const pollIntervalSeconds = config.get<number>('pollIntervalSeconds', 8);
 
   if (!tiersUrl) {
+    log('tiersUrl not configured — expensive model indicator disabled');
     console.warn('[Cursor Expensive Model] tiersUrl not configured');
     return;
   }
@@ -104,7 +108,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     },
   });
 
-  context.subscriptions.push(outputChannel);
   const spendBar = createSpendStatusBar(context);
   context.subscriptions.push(spendBar.disposable);
 
