@@ -8,6 +8,28 @@ export interface ModelData {
 const EXPENSIVE_TIER_THRESHOLD = 20; // $/1M tokens
 const MAX_MODE_MULTIPLIER = 1.2;
 
+const SUFFIX_MULTIPLIERS: [RegExp, number][] = [
+  [/-high-thinking$/, 3],
+  [/-thinking$/, 2],
+  [/-high$/, 1.5],
+];
+
+export function resolveModel(
+  modelId: string,
+  modelData: Record<string, ModelData>
+): { data: ModelData; multiplier: number } | null {
+  if (modelData[modelId]) {
+    return { data: modelData[modelId], multiplier: 1 };
+  }
+  for (const [pattern, multiplier] of SUFFIX_MULTIPLIERS) {
+    const baseId = modelId.replace(pattern, '');
+    if (baseId !== modelId && modelData[baseId]) {
+      return { data: modelData[baseId], multiplier };
+    }
+  }
+  return null;
+}
+
 export async function fetchModelData(url: string): Promise<Record<string, ModelData>> {
   return new Promise((resolve, reject) => {
     https.get(url, (res: import('http').IncomingMessage) => {
@@ -35,16 +57,11 @@ export async function fetchModelData(url: string): Promise<Record<string, ModelD
   });
 }
 
-export function isExpensive(
+export function isExpensiveModel(
   data: ModelData,
+  suffixMultiplier: number,
   maxMode: boolean
 ): boolean {
-  if (data.tier === 'expensive' || data.tier === 'extremely expensive') {
-    return true;
-  }
-  if (maxMode && data.output > 0) {
-    const effectiveOutput = data.output * MAX_MODE_MULTIPLIER;
-    return effectiveOutput >= EXPENSIVE_TIER_THRESHOLD;
-  }
-  return false;
+  const effectiveOutput = data.output * suffixMultiplier * (maxMode ? MAX_MODE_MULTIPLIER : 1);
+  return effectiveOutput >= EXPENSIVE_TIER_THRESHOLD;
 }

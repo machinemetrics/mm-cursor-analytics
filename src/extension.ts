@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { getCursorStateDbPath, getActiveModelsFromState } from './modelDetector';
-import { fetchModelData, isExpensive, type ModelData } from './tierFetcher';
+import { fetchModelData, resolveModel, isExpensiveModel, type ModelData } from './tierFetcher';
 
 const TITLEBAR_KEY = 'titleBar.activeBackground';
 const RED_VALUE = '#cc0000';
@@ -76,9 +76,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const dbPath = getCursorStateDbPath();
     const activeEntries = await getActiveModelsFromState(dbPath);
     const anyExpensive = activeEntries.some(({ model, maxMode }) => {
-      const data = modelData[model];
-      if (!data) return false;
-      return isExpensive(data, maxMode);
+      const resolved = resolveModel(model, modelData);
+      if (!resolved) return false;
+      return isExpensiveModel(resolved.data, resolved.multiplier, maxMode);
     });
 
     if (anyExpensive) {

@@ -63,13 +63,18 @@ Write to `model_tiers.json` at the repo root. Each model must include both `tier
 
 Example: `"claude-4-5-sonnet": { "tier": "daily driver", "output": 15 }`
 
-## Max Mode
+## Variant Suffixes and Max Mode
 
-Max Mode is a per-conversation toggle (adds 20% cost). Cursor stores it as `maxMode: true` in the model config. The extension treats a model as expensive when:
-- The base tier is expensive or extremely expensive, OR
-- Max Mode is on AND (output × 1.2) ≥ $20
+The extension handles cost modifiers at runtime. Do not add `-thinking`, `-high`, or `-high-thinking` variants to model_tiers.json. The extension strips these suffixes and applies multipliers:
 
-So a daily driver at $17.50 output becomes expensive with Max ($21). Include `output` for every model so this calculation works.
+- `-thinking`: 2x (thinking models generate significantly more output tokens)
+- `-high`: 1.5x (high reasoning effort)
+- `-high-thinking`: 3x (combined)
+- Max Mode: 1.2x (on top of suffix multiplier)
+
+Effective output = base output × suffix multiplier × max mode multiplier. Red bar when effective output ≥ $20.
+
+Example: `claude-4.6-sonnet-thinking` → base = claude-4.6-sonnet ($15) × 2 = $30 → expensive.
 
 ## Verification
 

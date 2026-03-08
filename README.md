@@ -6,7 +6,7 @@ A VS Code extension that turns the **title bar red** when you're using an expens
 
 - Fetches model tiers (cheap, daily driver, expensive, extremely expensive) from `model_tiers.json` in this repo
 - Polls Cursor's state database for your active model and Max Mode setting
-- Applies a red title bar when the model is expensive, or when Max Mode pushes a cheaper model over the $20/1M threshold (e.g. Composer 1.5 at $17.50 + Max = $21); restores your theme otherwise
+- Applies a red title bar when effective output cost ≥ $20/1M tokens, accounting for suffix multipliers (-thinking 2x, -high 1.5x, -high-thinking 3x) and Max Mode (1.2x); restores your theme otherwise
 
 ## Install Locally
 
