@@ -1,0 +1,51 @@
+{
+  "name": "mm-cursor-analytics",
+  "displayName": "Cursor Expensive Model Indicator",
+  "publisher": "mm-cursor-analytics",
+  "description": "Turns the title bar red when using an expensive AI model in Cursor",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Cursor Expensive Model Indicator",
+      "properties": {
+        "cursorExpensiveModelIndicator.tiersUrl": {
+          "type": "string",
+          "default": "https://raw.githubusercontent.com/lauzierj/mm-cursor-analytics/main/model_tiers.json",
+          "description": "URL to fetch model tiers JSON from"
+        },
+        "cursorExpensiveModelIndicator.pollIntervalSeconds": {
+          "type": "number",
+          "default": 8,
+          "description": "Seconds between checks of the active model"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.5",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "sql.js": "^1.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lauzierj/mm-cursor-analytics"
+  }
+}
