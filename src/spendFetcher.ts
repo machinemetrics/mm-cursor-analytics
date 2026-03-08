@@ -22,21 +22,38 @@ function getCursorDbPath(): string {
 }
 
 function getCursorAppDir(): string {
-  const execPath = process.execPath;
+  // process.execPath points to the Helper process, not the main app bundle.
+  // Walk up from __dirname (extension's out/ dir) to find the Cursor app resources.
+  // Extension is at: <appDir>/extensions/<ext>/out/spendFetcher.js
+  // We need:         <appDir> (i.e. .../Cursor.app/Contents/Resources/app on macOS)
+  // __dirname = .cursor/extensions/mm-.../out → go up 3 levels to get .cursor parent,
+  // but that's the user dir, not the app dir.
+  // Instead, resolve via the extension host process path from the require stack.
+  // The exthost is always at: <appResources>/out/vs/workbench/api/node/extensionHostProcess.js
+  // We can find it via the module parent chain, or use a known relative path from require.main.
+  const mainPath = require.main?.filename ?? '';
+  if (mainPath.includes('extensionHostProcess')) {
+    // mainPath: .../Cursor.app/Contents/Resources/app/out/vs/workbench/api/node/extensionHostProcess.js
+    // app dir:  .../Cursor.app/Contents/Resources/app
+    return path.resolve(mainPath, '../../../../..');
+  }
+  // Fallback: try standard locations
   if (process.platform === 'darwin') {
-    return path.join(path.dirname(execPath), '..', 'Resources', 'app');
+    return '/Applications/Cursor.app/Contents/Resources/app';
   }
   if (process.platform === 'win32') {
-    return path.join(path.dirname(execPath), 'resources', 'app');
+    return path.join(process.env['LOCALAPPDATA'] ?? '', 'Programs', 'cursor', 'resources', 'app');
   }
-  return path.join(path.dirname(execPath), 'resources', 'app');
+  return path.join(require('os').homedir(), '.local', 'share', 'cursor', 'resources', 'app');
 }
 
 function readAccessToken(): Promise<string | null> {
   const dbPath = getCursorDbPath();
+  log(`DB path: ${dbPath}, exists: ${fs.existsSync(dbPath)}`);
   if (!fs.existsSync(dbPath)) return Promise.resolve(null);
   try {
     const sqlitePath = path.join(getCursorAppDir(), 'node_modules', '@vscode', 'sqlite3', 'lib', 'sqlite3');
+    log(`sqlite3 path: ${sqlitePath}, exists: ${fs.existsSync(sqlitePath + '.js')}`);
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const sqlite3 = require(sqlitePath) as {
       OPEN_READONLY: number;
@@ -47,14 +64,17 @@ function readAccessToken(): Promise<string | null> {
     };
     return new Promise<string | null>((resolve) => {
       const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
-        if (err) { resolve(null); return; }
+        if (err) { log(`DB open error: ${err}`); resolve(null); return; }
         db.get('SELECT value FROM ItemTable WHERE key = ?', ['cursorAuth/accessToken'], (err2, row) => {
           db.close();
-          resolve(err2 || !row ? null : row.value);
+          if (err2) { log(`DB query error: ${err2}`); resolve(null); return; }
+          log(`Token found: ${row ? 'yes' : 'no'}`);
+          resolve(row ? row.value : null);
         });
       });
     });
-  } catch {
+  } catch (e) {
+    log(`sqlite3 load error: ${e}`);
     return Promise.resolve(null);
   }
 }

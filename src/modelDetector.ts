@@ -22,17 +22,21 @@ export interface ModelEntry {
 }
 
 function getCursorAppDir(): string {
-  const execPath = process.execPath;
+  // require.main is the extensionHostProcess.js, always at:
+  //   <appDir>/out/vs/workbench/api/node/extensionHostProcess.js
+  // Resolving ../../../../.. gives <appDir> on all platforms.
+  const mainPath = require.main?.filename ?? '';
+  if (mainPath.includes('extensionHostProcess')) {
+    return path.resolve(mainPath, '../../../../..');
+  }
+  // Fallback for non-standard installs
   if (process.platform === 'darwin') {
-    // execPath: .../Cursor.app/Contents/MacOS/Cursor
-    return path.join(path.dirname(execPath), '..', 'Resources', 'app');
+    return '/Applications/Cursor.app/Contents/Resources/app';
   }
   if (process.platform === 'win32') {
-    // execPath: ...\Cursor\Cursor.exe
-    return path.join(path.dirname(execPath), 'resources', 'app');
+    return path.join(process.env['LOCALAPPDATA'] ?? '', 'Programs', 'cursor', 'resources', 'app');
   }
-  // Linux: .../cursor
-  return path.join(path.dirname(execPath), 'resources', 'app');
+  return path.join(os.homedir(), '.local', 'share', 'cursor', 'resources', 'app');
 }
 
 function loadVscodeSqlite3(): { Database: new (file: string, cb: (err: Error | null) => void) => unknown } {
