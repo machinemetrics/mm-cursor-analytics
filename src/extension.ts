@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { getCursorStateDbPath, getActiveModelsFromState } from './modelDetector';
 import { fetchModelData, resolveModel, isExpensiveModel, type ModelData } from './tierFetcher';
 import { createSpendStatusBar } from './statusBar';
+import { clearSpendCache } from './spendCache';
 
 const TITLEBAR_KEY = 'titleBar.activeBackground';
 const RED_VALUE = '#cc0000';
@@ -102,7 +103,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     },
   });
 
-  context.subscriptions.push(createSpendStatusBar(context));
+  const spendBar = createSpendStatusBar(context);
+  context.subscriptions.push(spendBar.disposable);
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('mmCursorAnalytics.refreshSpend', () => {
+      spendBar.refresh();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('mmCursorAnalytics.clearSpendCache', async () => {
+      await clearSpendCache(context);
+      spendBar.refresh();
+      vscode.window.showInformationMessage('MM: Spend cache cleared. Refetching...');
+    })
+  );
 }
 
 export function deactivate(): void {

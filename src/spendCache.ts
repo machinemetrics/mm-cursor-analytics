@@ -88,6 +88,10 @@ export async function refreshSpend(ctx: vscode.ExtensionContext): Promise<void> 
   await saveCache(ctx, cache);
 }
 
+export async function clearSpendCache(ctx: vscode.ExtensionContext): Promise<void> {
+  await ctx.globalState.update(CACHE_KEY, undefined);
+}
+
 export function getSpendSummary(ctx: vscode.ExtensionContext): { today: number; month: number } {
   const cache = loadCache(ctx);
   const prefix = monthPrefix();

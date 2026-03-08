@@ -15,6 +15,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "mmCursorAnalytics.refreshSpend",
+        "title": "MM: Refresh Spend Data"
+      },
+      {
+        "command": "mmCursorAnalytics.clearSpendCache",
+        "title": "MM: Clear Spend Cache"
+      }
+    ],
     "configuration": {
       "title": "MM Cursor Expensive Model Indicator",
       "properties": {

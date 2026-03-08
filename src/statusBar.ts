@@ -2,15 +2,20 @@ import * as vscode from 'vscode';
 import { refreshSpend, getSpendSummary } from './spendCache';
 
 const POLL_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
+const COMMAND_ID = 'mmCursorAnalytics.refreshSpend';
 
 function formatDollars(amount: number): string {
   if (amount < 0.01) return '$0.00';
   return `$${amount.toFixed(2)}`;
 }
 
-export function createSpendStatusBar(ctx: vscode.ExtensionContext): vscode.Disposable {
+export function createSpendStatusBar(ctx: vscode.ExtensionContext): {
+  disposable: vscode.Disposable;
+  refresh: () => Promise<void>;
+} {
   const item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
-  item.tooltip = 'MM Cursor Spend — today · this month';
+  item.tooltip = 'MM Cursor Spend — today · this month\nClick to refresh';
+  item.command = COMMAND_ID;
   item.text = 'MM $(loading~spin)';
   item.show();
 
@@ -20,14 +25,13 @@ export function createSpendStatusBar(ctx: vscode.ExtensionContext): vscode.Dispo
   }
 
   async function refresh(): Promise<void> {
+    item.text = 'MM $(loading~spin)';
     try {
       await refreshSpend(ctx);
-      updateDisplay();
     } catch (e) {
-      // Keep showing last known values; don't blank the bar on transient errors
       console.warn('[MM Spend] Failed to refresh spend:', e);
-      updateDisplay();
     }
+    updateDisplay();
   }
 
   // Initial load — show cached values immediately, then fetch in background
@@ -37,9 +41,12 @@ export function createSpendStatusBar(ctx: vscode.ExtensionContext): vscode.Dispo
   const timer = setInterval(refresh, POLL_INTERVAL_MS);
 
   return {
-    dispose: () => {
-      clearInterval(timer);
-      item.dispose();
+    refresh,
+    disposable: {
+      dispose: () => {
+        clearInterval(timer);
+        item.dispose();
+      },
     },
   };
 }
