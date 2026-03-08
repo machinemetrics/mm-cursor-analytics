@@ -31,9 +31,9 @@ function getCursorAppDir(): string {
   return path.join(path.dirname(execPath), 'resources', 'app');
 }
 
-function readAccessToken(): string | null {
+function readAccessToken(): Promise<string | null> {
   const dbPath = getCursorDbPath();
-  if (!fs.existsSync(dbPath)) return null;
+  if (!fs.existsSync(dbPath)) return Promise.resolve(null);
   try {
     const sqlitePath = path.join(getCursorAppDir(), 'node_modules', '@vscode', 'sqlite3', 'lib', 'sqlite3');
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -52,9 +52,9 @@ function readAccessToken(): string | null {
           resolve(err2 || !row ? null : row.value);
         });
       });
-    }) as unknown as string | null;
+    });
   } catch {
-    return null;
+    return Promise.resolve(null);
   }
 }
 
@@ -122,7 +122,7 @@ interface EventsResponse {
 }
 
 export async function fetchUsageEventsSince(startMs: number, endMs: number): Promise<UsageEvent[]> {
-  const token = await (readAccessToken() as unknown as Promise<string | null>);
+  const token = await readAccessToken();
   if (!token) throw new Error('No Cursor access token found');
 
   const userId = extractUserId(token);
