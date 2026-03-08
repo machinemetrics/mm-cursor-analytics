@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { execFile } from 'child_process';
 
 const STORAGE_KEY =
   'src.vs.platform.reactivestorage.browser.reactiveStorageServiceImpl.persistentStorage.applicationUser';
@@ -21,34 +22,44 @@ export interface ModelEntry {
   maxMode: boolean;
 }
 
+function querySqlite(dbPath: string, sql: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    execFile('sqlite3', ['-json', dbPath, sql], { timeout: 5000 }, (err, stdout) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(stdout.trim());
+      }
+    });
+  });
+}
+
 export async function getActiveModelsFromState(dbPath: string): Promise<ModelEntry[]> {
   if (!fs.existsSync(dbPath)) {
     return [];
   }
 
-  const initSqlJs = require('sql.js');
-  const SQL = await initSqlJs();
-  const fileBuffer = fs.readFileSync(dbPath);
-  const db = new SQL.Database(fileBuffer);
-
   try {
-    const rows = db.exec(
+    const stdout = await querySqlite(
+      dbPath,
       `SELECT value FROM ItemTable WHERE key='${STORAGE_KEY}'`
     );
-    db.close();
-
-    if (!rows.length || !rows[0].values.length) {
+    if (!stdout) {
       return [];
     }
 
-    const value = rows[0].values[0][0] as string;
-    const data = JSON.parse(value);
+    const rows = JSON.parse(stdout) as { value: string }[];
+    if (!rows.length) {
+      return [];
+    }
+
+    const data = JSON.parse(rows[0].value);
     const modelConfig = data?.aiSettings?.modelConfig;
     if (!modelConfig || typeof modelConfig !== 'object') {
       return [];
     }
 
-    const entries: { model: string; maxMode: boolean }[] = [];
+    const entries: ModelEntry[] = [];
     for (const entry of Object.values(modelConfig) as unknown[]) {
       const obj = entry as Record<string, unknown>;
       const modelName = obj?.modelName ?? obj?.model;
@@ -59,7 +70,6 @@ export async function getActiveModelsFromState(dbPath: string): Promise<ModelEnt
     }
     return entries;
   } catch {
-    db.close();
     return [];
   }
 }

@@ -41,9 +41,6 @@
     "@types/vscode": "^1.85.0",
     "typescript": "^5.0.0"
   },
-  "dependencies": {
-    "sql.js": "^1.10.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/machinemetrics/mm-cursor-analytics"
