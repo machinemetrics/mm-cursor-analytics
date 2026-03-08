@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { getCursorStateDbPath, getActiveModelsFromState } from './modelDetector';
 import { fetchModelData, resolveModel, isExpensiveModel, type ModelData } from './tierFetcher';
+import { createSpendStatusBar } from './statusBar';
 
 const TITLEBAR_KEY = 'titleBar.activeBackground';
 const RED_VALUE = '#cc0000';
@@ -100,6 +101,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       restore();
     },
   });
+
+  context.subscriptions.push(createSpendStatusBar(context));
 }
 
 export function deactivate(): void {
