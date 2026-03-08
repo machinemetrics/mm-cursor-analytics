@@ -20,7 +20,7 @@
       "properties": {
         "cursorExpensiveModelIndicator.tiersUrl": {
           "type": "string",
-          "default": "https://raw.githubusercontent.com/lauzierj/mm-cursor-analytics/main/model_tiers.json",
+          "default": "https://raw.githubusercontent.com/machinemetrics/mm-cursor-analytics/main/model_tiers.json",
           "description": "URL to fetch model tiers JSON from"
         },
         "cursorExpensiveModelIndicator.pollIntervalSeconds": {
@@ -46,6 +46,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lauzierj/mm-cursor-analytics"
+    "url": "https://github.com/machinemetrics/mm-cursor-analytics"
   }
 }

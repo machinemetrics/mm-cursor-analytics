@@ -32,7 +32,7 @@ A VS Code extension that turns the **title bar red** when you're using an expens
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `cursorExpensiveModelIndicator.tiersUrl` | `https://raw.githubusercontent.com/lauzierj/mm-cursor-analytics/main/model_tiers.json` | URL to fetch model tiers JSON |
+| `cursorExpensiveModelIndicator.tiersUrl` | `https://raw.githubusercontent.com/machinemetrics/mm-cursor-analytics/main/model_tiers.json` | URL to fetch model tiers JSON |
 | `cursorExpensiveModelIndicator.pollIntervalSeconds` | 8 | Seconds between model checks |
 
 ## Updating Model Tiers
