@@ -3,6 +3,7 @@ import { getCursorStateDbPath, getActiveModelsFromState } from './modelDetector'
 import { fetchModelData, resolveModel, isExpensiveModel, type ModelData } from './tierFetcher';
 import { createSpendStatusBar } from './statusBar';
 import { clearSpendCache } from './spendCache';
+import { outputChannel } from './logger';
 
 const TITLEBAR_KEY = 'titleBar.activeBackground';
 const RED_VALUE = '#cc0000';
@@ -103,6 +104,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     },
   });
 
+  context.subscriptions.push(outputChannel);
   const spendBar = createSpendStatusBar(context);
   context.subscriptions.push(spendBar.disposable);
 

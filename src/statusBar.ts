@@ -1,15 +1,9 @@
 import * as vscode from 'vscode';
 import { refreshSpend, getSpendSummary } from './spendCache';
+import { log } from './logger';
 
 const POLL_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
 const MENU_COMMAND_ID = 'mmCursorAnalytics.showMenu';
-
-export const outputChannel = vscode.window.createOutputChannel('MM Cursor Analytics');
-
-export function log(msg: string): void {
-  const ts = new Date().toISOString();
-  outputChannel.appendLine(`[${ts}] ${msg}`);
-}
 
 function formatDollars(amount: number): string {
   if (amount < 0.01) return '$0.00';

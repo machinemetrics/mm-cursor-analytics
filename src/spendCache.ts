@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { fetchUsageEventsSince } from './spendFetcher';
-import { log } from './statusBar';
+import { log } from './logger';
 
 // Stored in globalState under this key
 const CACHE_KEY = 'mmSpendCache';

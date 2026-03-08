@@ -2,7 +2,7 @@ import * as https from 'https';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import { log } from './statusBar';
+import { log } from './logger';
 
 export interface UsageEvent {
   timestamp: number; // ms
