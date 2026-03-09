@@ -8,6 +8,9 @@ export interface UsageEvent {
   timestamp: number; // ms
   date: string;      // YYYY-MM-DD in local time
   chargedCents: number;
+  model?: string;
+  inputTokens?: number;
+  outputTokens?: number;
 }
 
 function getCursorDbPath(): string {
@@ -175,6 +178,9 @@ export async function fetchBillingPeriodStart(): Promise<number> {
 interface RawEvent {
   timestamp: string;
   chargedCents?: number;
+  model?: string;
+  inputTokens?: number;
+  outputTokens?: number;
 }
 
 interface EventsResponse {
@@ -218,6 +224,9 @@ export async function fetchUsageEventsSince(startMs: number, endMs: number): Pro
         timestamp: ts,
         date: toLocalDate(ts),
         chargedCents: e.chargedCents ?? 0,
+        model: e.model,
+        inputTokens: e.inputTokens,
+        outputTokens: e.outputTokens,
       });
     }
 

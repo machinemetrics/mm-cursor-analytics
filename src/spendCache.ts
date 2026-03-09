@@ -6,6 +6,14 @@ const CACHE_KEY = 'mmSpendCache';
 // Refresh billing period start once per day
 const BILLING_PERIOD_TTL_MS = 24 * 60 * 60 * 1000;
 
+export interface ExpensiveTurn {
+  chargedCents: number;
+  timestamp: number;
+  model?: string;
+  inputTokens?: number;
+  outputTokens?: number;
+}
+
 interface SpendCache {
   // YYYY-MM-DD -> total charged dollars for that day
   days: Record<string, number>;
@@ -15,6 +23,8 @@ interface SpendCache {
   billingPeriodStartMs: number;
   // when we last fetched the billing period start
   billingPeriodFetchedAt: number;
+  // most expensive single turn today
+  expensiveTurnToday?: ExpensiveTurn;
 }
 
 function todayKey(): string {
@@ -86,10 +96,22 @@ export async function refreshSpend(ctx: vscode.ExtensionContext): Promise<void> 
   // Clear today's bucket — re-accumulate fresh each time
   const today = todayKey();
   delete cache.days[today];
+  cache.expensiveTurnToday = undefined;
 
   for (const e of events) {
     const dollars = e.chargedCents / 100;
     cache.days[e.date] = (cache.days[e.date] ?? 0) + dollars;
+
+    // Track most expensive turn for today
+    if (e.date === today && e.chargedCents > (cache.expensiveTurnToday?.chargedCents ?? 0)) {
+      cache.expensiveTurnToday = {
+        chargedCents: e.chargedCents,
+        timestamp: e.timestamp,
+        model: e.model,
+        inputTokens: e.inputTokens,
+        outputTokens: e.outputTokens,
+      };
+    }
   }
 
   if (events.length > 0) {
@@ -114,7 +136,7 @@ export async function clearSpendCache(ctx: vscode.ExtensionContext): Promise<voi
   await ctx.globalState.update(CACHE_KEY, undefined);
 }
 
-export function getSpendSummary(ctx: vscode.ExtensionContext): { today: number; month: number } {
+export function getSpendSummary(ctx: vscode.ExtensionContext): { today: number; month: number; expensiveTurnToday?: ExpensiveTurn } {
   const cache = loadCache(ctx);
   const today = todayKey();
   const billingStartDate = cache.billingPeriodStartMs ? toLocalDate(cache.billingPeriodStartMs) : '1970-01-01';
@@ -127,6 +149,7 @@ export function getSpendSummary(ctx: vscode.ExtensionContext): { today: number; 
   return {
     today: cache.days[today] ?? 0,
     month,
+    expensiveTurnToday: cache.expensiveTurnToday,
   };
 }
 
