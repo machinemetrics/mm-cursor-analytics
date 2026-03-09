@@ -1,0 +1,53 @@
+version: 2.1
+
+jobs:
+  validate:
+    docker:
+      - image: cimg/node:20.11
+    steps:
+      - checkout
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run compile
+      - run: npm test
+      - run: npm run package
+      - run:
+          name: Verify version is greater than published
+          command: |
+            CURRENT=$(node -p "require('./package.json').version")
+            PUBLISHED=$(npx ovsx get machinemetrics.mm-cursor-analytics --metadata 2>/dev/null \
+              | grep -oP '"version":\s*"\K[^"]+' || echo "0.0.0")
+            node -e "
+              const s = require('semver');
+              if (!s.gt('${CURRENT}', '${PUBLISHED}')) {
+                console.error('Version ${CURRENT} must be greater than published ${PUBLISHED}');
+                process.exit(1);
+              }
+              console.log('Version check passed: ${CURRENT} > ${PUBLISHED}');
+            "
+      - persist_to_workspace:
+          root: .
+          paths: ["*.vsix"]
+
+  publish:
+    docker:
+      - image: cimg/node:20.11
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: npm ci
+      - run: npm run compile
+      - run:
+          name: Publish to Open VSX
+          command: npx ovsx publish --pat $OVSX_PAT
+
+workflows:
+  build-and-validate:
+    jobs:
+      - validate
+      - publish:
+          requires: [validate]
+          filters:
+            branches:
+              only: main
