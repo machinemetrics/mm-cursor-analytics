@@ -1,12 +1,23 @@
 {
   "name": "mm-cursor-analytics",
   "displayName": "MM Cursor Expensive Model Indicator",
-  "publisher": "mm-cursor-analytics",
+  "publisher": "machinemetrics",
   "description": "Turns the title bar red when using an expensive AI model in Cursor",
   "version": "0.1.0",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#1a1a2e",
+    "theme": "dark"
+  },
+  "homepage": "https://github.com/machinemetrics/mm-cursor-analytics",
+  "bugs": {
+    "url": "https://github.com/machinemetrics/mm-cursor-analytics/issues"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
+  "extensionKind": ["ui"],
   "categories": [
     "Other"
   ],
@@ -48,11 +59,19 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "vsce package"
+    "lint": "eslint src --ext .ts",
+    "test": "node --test out/test/**/*.test.js",
+    "vscode:prepublish": "npm run compile",
+    "package": "npx @vscode/vsce package",
+    "publish:ovsx": "npx ovsx publish"
   },
   "devDependencies": {
     "@types/node": "^25.3.5",
     "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "semver": "^7.6.0",
     "typescript": "^5.0.0"
   },
   "repository": {
