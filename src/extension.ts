@@ -82,6 +82,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     const dbPath = getCursorStateDbPath();
     const activeEntries = await getActiveModelsFromState(dbPath);
+    if (activeEntries === null) {
+      log('DB read failed — skipping poll, keeping current title bar state');
+      return;
+    }
     log(`Detected model entries: ${JSON.stringify(activeEntries)}`);
 
     const anyExpensive = activeEntries.some(({ model, maxMode }) => {

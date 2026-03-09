@@ -79,7 +79,7 @@ function queryRow(dbPath: string): Promise<string | null> {
   });
 }
 
-export async function getActiveModelsFromState(dbPath: string): Promise<ModelEntry[]> {
+export async function getActiveModelsFromState(dbPath: string): Promise<ModelEntry[] | null> {
   if (!fs.existsSync(dbPath)) {
     return [];
   }
@@ -107,6 +107,6 @@ export async function getActiveModelsFromState(dbPath: string): Promise<ModelEnt
     }
     return entries;
   } catch {
-    return [];
+    return null;
   }
 }
