@@ -82,11 +82,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     const dbPath = getCursorStateDbPath();
     const activeEntries = await getActiveModelsFromState(dbPath);
+    log(`Detected model entries: ${JSON.stringify(activeEntries)}`);
+
     const anyExpensive = activeEntries.some(({ model, maxMode }) => {
       const resolved = resolveModel(model, modelData);
-      if (!resolved) return false;
-      return isExpensiveModel(resolved.data, resolved.multiplier, maxMode);
+      if (!resolved) {
+        log(`  [${model}] not found in tiers — skipping`);
+        return false;
+      }
+      const expensive = isExpensiveModel(resolved.data, resolved.multiplier, maxMode);
+      log(`  [${model}] output=$${resolved.data.output} × ${resolved.multiplier}${maxMode ? ' × 1.2 (max)' : ''} → expensive=${expensive}`);
+      return expensive;
     });
+
+    log(`anyExpensive=${anyExpensive}`);
 
     if (anyExpensive) {
       applyRed();
