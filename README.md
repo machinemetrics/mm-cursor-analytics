@@ -6,7 +6,7 @@ A VS Code extension that turns the **title bar red** when you're using an expens
 
 - Fetches model tiers (cheap, daily driver, expensive, extremely expensive) from `model_tiers.json` in this repo
 - Polls Cursor's state database for your active model and Max Mode setting
-- Applies a red title bar when effective output cost ≥ $35/1M tokens, accounting for suffix multipliers (-thinking 2x, -medium-thinking 3x, -high 1.5x, -high-thinking 5x) and Max Mode (1.2x); restores your theme otherwise
+- Applies a red title bar when effective output cost ≥ $50/1M tokens, accounting for suffix multipliers (-thinking 2x, -medium-thinking 3x, -high 1.5x, -high-thinking 5x) and Max Mode (1.2x); restores your theme otherwise
 
 ## Install Locally
 
@@ -55,6 +55,6 @@ Commit and push the updated file. Set up a daily automation (GitHub Actions, Cur
 - **expensive**: $20–50/1M tokens (Opus at $25; Sonnet thinking at $30)
 - **extremely expensive**: ≥ $50/1M tokens
 
-Red title bar triggers at **≥ $35/1M tokens effective cost** (e.g. Opus with high-thinking, or Opus-fast).
+Red title bar triggers at **≥ $50/1M tokens effective cost** (e.g. Opus with medium/high-thinking).
 
 Models not in cursor-costs (e.g. Claude 4.6 Opus) are added via `MANUAL_OVERRIDES` in the seed script.

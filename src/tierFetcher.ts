@@ -5,7 +5,7 @@ export interface ModelData {
   output: number;
 }
 
-const EXPENSIVE_TIER_THRESHOLD = 35; // $/1M tokens
+const EXPENSIVE_TIER_THRESHOLD = 50; // $/1M tokens
 const MAX_MODE_MULTIPLIER = 1.2;
 
 const SUFFIX_MULTIPLIERS: [RegExp, number][] = [
