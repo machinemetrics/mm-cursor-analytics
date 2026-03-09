@@ -49,9 +49,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const inspected = config.inspect<Record<string, string>>('colorCustomizations');
     const globalValue = inspected?.globalValue ?? {};
     const current = globalValue[TITLEBAR_KEY];
-    log(`applyRed: current global titleBar="${current ?? 'undefined'}"`);
     if (current !== RED_VALUE) {
-      log(`applyRed: setting red (was "${current ?? 'undefined'}")`);
       context.globalState.update(savedKey, current);
       const next = { ...globalValue, [TITLEBAR_KEY]: RED_VALUE };
       config.update('colorCustomizations', next, vscode.ConfigurationTarget.Global);
@@ -64,9 +62,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const inspected = config.inspect<Record<string, string>>('colorCustomizations');
     const globalValue = inspected?.globalValue ?? {};
     const current = globalValue[TITLEBAR_KEY];
-    log(`restore: current global titleBar="${current ?? 'undefined'}", saved="${saved ?? 'undefined'}"`);
     if (current === RED_VALUE) {
-      log(`restore: clearing red`);
       const next = { ...globalValue };
       if (saved !== undefined) {
         next[TITLEBAR_KEY] = saved;
