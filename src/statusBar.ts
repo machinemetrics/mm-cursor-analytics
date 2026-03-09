@@ -16,25 +16,24 @@ function formatTokens(count: number): string {
   return String(count);
 }
 
-function formatExpensiveTurn(turn: ExpensiveTurn): string {
-  const cost = formatDollars(turn.chargedCents / 100);
-  const time = new Date(turn.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  const lines: string[] = [`Most Expensive Turn Today: ${cost}`];
+function formatExpensiveTurnDetail(turn: ExpensiveTurn): string {
+  const parts: string[] = [];
 
   if (turn.inputTokens != null || turn.outputTokens != null) {
-    const parts: string[] = [];
-    if (turn.inputTokens != null) parts.push(`in: ${formatTokens(turn.inputTokens)}`);
-    if (turn.outputTokens != null) parts.push(`out: ${formatTokens(turn.outputTokens)}`);
-    lines.push(`Tokens: ${parts.join(' · ')}`);
+    const tokenParts: string[] = [];
+    if (turn.inputTokens != null) tokenParts.push(`in: ${formatTokens(turn.inputTokens)}`);
+    if (turn.outputTokens != null) tokenParts.push(`out: ${formatTokens(turn.outputTokens)}`);
+    parts.push(`tokens: ${tokenParts.join(' · ')}`);
   }
 
   if (turn.model) {
-    lines.push(`Model: ${turn.model}`);
+    parts.push(`model: ${turn.model}`);
   }
 
-  lines.push(`Time: ${time}`);
-  return lines.join('\n');
+  const time = new Date(turn.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  parts.push(`at ${time}`);
+
+  return parts.join(' · ');
 }
 
 export function createSpendStatusBar(ctx: vscode.ExtensionContext): {
@@ -48,15 +47,26 @@ export function createSpendStatusBar(ctx: vscode.ExtensionContext): {
 
   function updateDisplay(): void {
     const { today, month, expensiveTurnToday } = getSpendSummary(ctx);
-    const text = `MM ${formatDollars(today)} · ${formatDollars(month)}/mo`;
+
+    const expensiveStr = expensiveTurnToday
+      ? formatDollars(expensiveTurnToday.chargedCents / 100)
+      : '—';
+
+    const text = `MM ${formatDollars(today)} · ${formatDollars(month)} · ${expensiveStr}↑`;
     item.text = text;
 
-    let tooltip = 'MM Cursor Spend — today · this month';
+    const lines: string[] = [
+      `Today's Spend:          ${formatDollars(today)}`,
+      `Billing Period:           ${formatDollars(month)}`,
+      `Most Expensive Turn:  ${expensiveTurnToday ? formatDollars(expensiveTurnToday.chargedCents / 100) : '—'}`,
+    ];
+
     if (expensiveTurnToday) {
-      tooltip += '\n\n' + formatExpensiveTurn(expensiveTurnToday);
+      lines.push(`  ${formatExpensiveTurnDetail(expensiveTurnToday)}`);
     }
-    tooltip += '\nClick for options';
-    item.tooltip = tooltip;
+
+    lines.push('', 'Click for options');
+    item.tooltip = lines.join('\n');
 
     log(`Display updated: ${text}`);
   }
