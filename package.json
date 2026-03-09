@@ -1,7 +1,7 @@
 {
   "name": "mm-cursor-analytics",
   "displayName": "MM Cursor Expensive Model Indicator",
-  "publisher": "mm-cursor-analytics",
+  "publisher": "machinemetrics",
   "description": "Turns the title bar red when using an expensive AI model in Cursor",
   "version": "0.1.0",
   "engines": {
