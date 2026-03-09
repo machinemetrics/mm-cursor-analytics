@@ -75,11 +75,12 @@ The extension handles cost modifiers at runtime. Do **not** add `-thinking`, `-m
 | `-high-thinking` | 5x |
 | Max Mode | 1.2x (on top of suffix multiplier) |
 
-Effective output = base output × suffix multiplier × max mode multiplier. **Red bar when effective output ≥ $35.**
+Effective output = base output × suffix multiplier × max mode multiplier. **Red bar when effective output ≥ $50.**
 
 Examples:
-- `claude-4.6-sonnet-medium-thinking` → base = claude-4.6-sonnet ($15) × 3 = **$45** → 🔴 red bar
+- `claude-4.6-sonnet-medium-thinking` → base = claude-4.6-sonnet ($15) × 3 = **$45** → no red bar
 - `claude-4.6-sonnet-thinking` → base = claude-4.6-sonnet ($15) × 2 = **$30** → no red bar
+- `claude-4.6-opus-medium-thinking` → base = claude-4.6-opus ($25) × 3 = **$75** → 🔴 red bar
 - `claude-4.6-opus-high-thinking` → base = claude-4.6-opus ($25) × 5 = **$125** → 🔴 red bar
 
 ## Verification

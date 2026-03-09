@@ -30,7 +30,7 @@ The extension logs `[model-id] not found in tiers — skipping` when it reads a 
 | expensive | $20 – $49.99 |
 | extremely expensive | ≥ $50 |
 
-**Red title bar threshold: ≥ $35 effective output cost.**
+**Red title bar threshold: ≥ $50 effective output cost.**
 
 Effective cost = base output × suffix multiplier × (1.2 if Max Mode).
 
