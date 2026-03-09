@@ -27,16 +27,16 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 
 - Lowercase
 - Replace spaces with hyphens
-- Replace `.` with `-` (e.g. `4.6` → `4-6`)
-- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4-6-opus-fast`
+- **Preserve `.` in version numbers** — do NOT replace dots with hyphens (e.g. `4.6` stays `4.6`)
+- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path
 
 Examples:
-- `Claude 4.6 Opus` → `claude-4-6-opus`
-- `Claude 4.6 Opus (Fast mode)` → `claude-4-6-opus-fast`
-- `GPT-5.4` → `gpt-5-4`
-- `Composer 1.5` → `composer-1-5`
-- `Gemini 3.1 Pro` → `gemini-3-1-pro`
+- `Claude 4.6 Opus` → `claude-4.6-opus`
+- `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `GPT-5.4` → `gpt-5.4`
+- `Composer 1.5` → `composer-1.5`
+- `Gemini 3.1 Pro` → `gemini-3.1-pro`
 
 ## Tier thresholds (output price per 1M tokens)
 
@@ -65,16 +65,22 @@ Example: `"claude-4-5-sonnet": { "tier": "daily driver", "output": 15 }`
 
 ## Variant Suffixes and Max Mode
 
-The extension handles cost modifiers at runtime. Do not add `-thinking`, `-high`, or `-high-thinking` variants to model_tiers.json. The extension strips these suffixes and applies multipliers:
+The extension handles cost modifiers at runtime. Do **not** add `-thinking`, `-medium-thinking`, `-high`, or `-high-thinking` variants to `model_tiers.json` — only add the base model ID. The extension strips these suffixes and applies multipliers:
 
-- `-thinking`: 2x (thinking models generate significantly more output tokens)
-- `-high`: 1.5x (high reasoning effort)
-- `-high-thinking`: 3x (combined)
-- Max Mode: 1.2x (on top of suffix multiplier)
+| Suffix | Multiplier |
+|--------|------------|
+| `-medium-thinking` | 3x |
+| `-thinking` | 2x |
+| `-high` | 1.5x |
+| `-high-thinking` | 5x |
+| Max Mode | 1.2x (on top of suffix multiplier) |
 
-Effective output = base output × suffix multiplier × max mode multiplier. Red bar when effective output ≥ $20.
+Effective output = base output × suffix multiplier × max mode multiplier. **Red bar when effective output ≥ $35.**
 
-Example: `claude-4.6-sonnet-thinking` → base = claude-4.6-sonnet ($15) × 2 = $30 → expensive.
+Examples:
+- `claude-4.6-sonnet-medium-thinking` → base = claude-4.6-sonnet ($15) × 3 = **$45** → 🔴 red bar
+- `claude-4.6-sonnet-thinking` → base = claude-4.6-sonnet ($15) × 2 = **$30** → no red bar
+- `claude-4.6-opus-high-thinking` → base = claude-4.6-opus ($25) × 5 = **$125** → 🔴 red bar
 
 ## Verification
 
@@ -84,3 +90,5 @@ After writing, ensure:
 - Claude 4.6 Opus ($25) is "expensive"
 - Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
 - No duplicate model IDs
+- No variant suffixes (`-thinking`, `-medium-thinking`, `-high`, `-high-thinking`) — base model IDs only
+- Model IDs use the same format as `model_tiers.json` (periods preserved in version numbers)

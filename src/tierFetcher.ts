@@ -5,11 +5,12 @@ export interface ModelData {
   output: number;
 }
 
-const EXPENSIVE_TIER_THRESHOLD = 20; // $/1M tokens
+const EXPENSIVE_TIER_THRESHOLD = 35; // $/1M tokens
 const MAX_MODE_MULTIPLIER = 1.2;
 
 const SUFFIX_MULTIPLIERS: [RegExp, number][] = [
-  [/-high-thinking$/, 3],
+  [/-high-thinking$/, 5],
+  [/-medium-thinking$/, 3],
   [/-thinking$/, 2],
   [/-high$/, 1.5],
 ];
