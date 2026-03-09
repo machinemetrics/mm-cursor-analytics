@@ -6,22 +6,25 @@ A VS Code extension that turns the **title bar red** when you're using an expens
 
 - Fetches model tiers (cheap, daily driver, expensive, extremely expensive) from `model_tiers.json` in this repo
 - Polls Cursor's state database for your active model and Max Mode setting
-- Applies a red title bar when effective output cost ≥ $20/1M tokens, accounting for suffix multipliers (-thinking 2x, -high 1.5x, -high-thinking 3x) and Max Mode (1.2x); restores your theme otherwise
+- Applies a red title bar when effective output cost ≥ $35/1M tokens, accounting for suffix multipliers (-thinking 2x, -medium-thinking 3x, -high 1.5x, -high-thinking 5x) and Max Mode (1.2x); restores your theme otherwise
 
 ## Install Locally
 
-1. Build the extension:
+1. Install dependencies and build:
    ```bash
    npm install
    npm run compile
-   npm run package
+   npx vsce package
    ```
+   > `vsce` is included as a dev dependency — use `npx vsce package` rather than `npm run package` (or add `@vscode/vsce` globally if preferred).
 
 2. Install in Cursor:
    ```bash
-   cursor --install-extension ./mm-cursor-analytics-0.1.0.vsix
+   /Applications/Cursor.app/Contents/Resources/app/bin/cursor --install-extension ./mm-cursor-analytics-0.1.0.vsix
    ```
-   Or: Extensions panel → `...` → Install from VSIX → select the `.vsix` file.
+   > The `cursor` CLI is not on `$PATH` by default. Use the full path above, or install via the Extensions panel: `...` → **Install from VSIX** → select the `.vsix` file.
+
+3. Reload Cursor to activate the extension.
 
 ## Requirements
 
@@ -49,7 +52,9 @@ Commit and push the updated file. Set up a daily automation (GitHub Actions, Cur
 
 - **cheap**: output < $5/1M tokens
 - **daily driver**: $5–20/1M tokens (Sonnet at $15)
-- **expensive**: $20–50/1M tokens (Opus at $25; triggers red title bar)
-- **extremely expensive**: ≥ $50/1M tokens (triggers red title bar)
+- **expensive**: $20–50/1M tokens (Opus at $25; Sonnet thinking at $30)
+- **extremely expensive**: ≥ $50/1M tokens
+
+Red title bar triggers at **≥ $35/1M tokens effective cost** (e.g. Opus with high-thinking, or Opus-fast).
 
 Models not in cursor-costs (e.g. Claude 4.6 Opus) are added via `MANUAL_OVERRIDES` in the seed script.
