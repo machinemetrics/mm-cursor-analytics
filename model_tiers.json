@@ -1,46 +1,98 @@
 {
-  "lastUpdated": "2026-03-08T18:31:32.176Z",
-  "claude-4.1-opus": {
+  "lastUpdated": "2026-03-12T13:02:36.822396Z",
+  "claude-4-5-haiku": {
+    "tier": "daily driver",
+    "output": 5
+  },
+  "claude-4-5-opus": {
+    "tier": "expensive",
+    "output": 25
+  },
+  "claude-4-5-sonnet": {
+    "tier": "daily driver",
+    "output": 15
+  },
+  "claude-4-6-opus": {
+    "tier": "expensive",
+    "output": 25
+  },
+  "claude-4-6-opus-fast": {
     "tier": "extremely expensive",
-    "output": 75
+    "output": 150
+  },
+  "claude-4-6-sonnet": {
+    "tier": "daily driver",
+    "output": 15
   },
   "claude-4-sonnet": {
     "tier": "daily driver",
     "output": 15
   },
-  "claude-4-sonnet-thinking": {
-    "tier": "daily driver",
-    "output": 15
-  },
-  "claude-4.5-haiku": {
-    "tier": "daily driver",
-    "output": 5
-  },
-  "claude-4.5-haiku-thinking": {
-    "tier": "daily driver",
-    "output": 5
-  },
-  "claude-4.5-opus-high": {
+  "claude-4-sonnet-1m": {
     "tier": "expensive",
-    "output": 20
+    "output": 22.5
   },
-  "claude-4.5-opus-high-thinking": {
-    "tier": "expensive",
-    "output": 20
-  },
-  "claude-4.5-sonnet": {
+  "composer-1": {
     "tier": "daily driver",
-    "output": 15
+    "output": 10
   },
-  "claude-4.5-sonnet-thinking": {
+  "composer-1-5": {
     "tier": "daily driver",
-    "output": 15
+    "output": 17.5
   },
-  "agent_review": {
+  "gemini-2-5-flash": {
+    "tier": "cheap",
+    "output": 2.5
+  },
+  "gemini-3-1-pro": {
     "tier": "daily driver",
-    "output": 15
+    "output": 12
+  },
+  "gemini-3-flash": {
+    "tier": "cheap",
+    "output": 3
+  },
+  "gemini-3-pro": {
+    "tier": "daily driver",
+    "output": 12
+  },
+  "gemini-3-pro-image-preview": {
+    "tier": "daily driver",
+    "output": 12
   },
   "gpt-5": {
+    "tier": "daily driver",
+    "output": 10
+  },
+  "gpt-5-1-codex": {
+    "tier": "daily driver",
+    "output": 10
+  },
+  "gpt-5-1-codex-max": {
+    "tier": "daily driver",
+    "output": 10
+  },
+  "gpt-5-1-codex-mini": {
+    "tier": "cheap",
+    "output": 2
+  },
+  "gpt-5-2": {
+    "tier": "daily driver",
+    "output": 14
+  },
+  "gpt-5-2-codex": {
+    "tier": "daily driver",
+    "output": 14
+  },
+  "gpt-5-3-codex": {
+    "tier": "daily driver",
+    "output": 14
+  },
+  "gpt-5-4": {
+    "tier": "daily driver",
+    "output": 15
+  },
+  "gpt-5-codex": {
     "tier": "daily driver",
     "output": 10
   },
@@ -52,108 +104,12 @@
     "tier": "cheap",
     "output": 2
   },
-  "gpt-5-nano": {
-    "tier": "cheap",
-    "output": 2
-  },
-  "gpt-5-high": {
-    "tier": "expensive",
-    "output": 20
-  },
-  "gpt-5-high-fast": {
-    "tier": "expensive",
-    "output": 20
-  },
-  "gpt-5.1-codex": {
-    "tier": "daily driver",
-    "output": 10
-  },
-  "gpt-5.1-codex-max": {
-    "tier": "daily driver",
-    "output": 10
-  },
-  "gpt-5.1-codex-mini": {
-    "tier": "cheap",
-    "output": 2
-  },
-  "gpt-5.1-codex-mini-high": {
-    "tier": "cheap",
-    "output": 2
-  },
-  "gpt-5.2": {
-    "tier": "daily driver",
-    "output": 14
-  },
-  "gpt-5.2-pro": {
-    "tier": "daily driver",
-    "output": 14
-  },
-  "gpt-5.2-codex": {
-    "tier": "daily driver",
-    "output": 10
-  },
-  "o4-mini": {
-    "tier": "cheap",
-    "output": 2
-  },
-  "gemini-2.5-flash": {
-    "tier": "cheap",
-    "output": 2.5
-  },
-  "gemini-2.5-flash-latest": {
-    "tier": "cheap",
-    "output": 2.5
-  },
-  "gemini-3-flash": {
-    "tier": "cheap",
-    "output": 3
-  },
-  "gemini-3-pro-preview": {
-    "tier": "daily driver",
-    "output": 12
-  },
-  "composer": {
-    "tier": "daily driver",
-    "output": 10
-  },
-  "composer-1": {
-    "tier": "daily driver",
-    "output": 10
-  },
-  "auto": {
-    "tier": "daily driver",
-    "output": 10
-  },
   "grok-code": {
     "tier": "cheap",
-    "output": 0
+    "output": 1.5
   },
-  "grok-code-fast-1": {
+  "kimi-k2-5": {
     "tier": "cheap",
-    "output": 0
-  },
-  "grok-4-0709": {
-    "tier": "cheap",
-    "output": 0
-  },
-  "accounts/fireworks/models/kimi-k2-instruct": {
-    "tier": "cheap",
-    "output": 2.4
-  },
-  "claude-4.6-opus": {
-    "tier": "expensive",
-    "output": 25
-  },
-  "claude-4.6-opus-fast": {
-    "tier": "extremely expensive",
-    "output": 150
-  },
-  "claude-4.6-sonnet": {
-    "tier": "daily driver",
-    "output": 15
-  },
-  "composer-1.5": {
-    "tier": "daily driver",
-    "output": 17.5
+    "output": 3
   }
 }
