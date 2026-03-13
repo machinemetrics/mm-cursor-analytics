@@ -49,7 +49,8 @@ Examples:
 
 Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
-**Special cases:** `auto` is included in the Pro plan — always set tier to `cheap` regardless of API rate.
+**Special cases:**
+- **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
 
 ## Output format
 
@@ -63,7 +64,7 @@ Write to `model_tiers.json` at the repo root. Each model must include both `tier
 }
 ```
 
-Example: `"claude-4-5-sonnet": { "tier": "daily driver", "output": 15 }`
+Example: `"claude-4.5-sonnet": { "tier": "daily driver", "output": 15 }`
 
 ## Variant Suffixes and Max Mode
 
@@ -85,4 +86,5 @@ After writing, ensure:
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
 - Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs

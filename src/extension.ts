@@ -34,6 +34,15 @@ function updateModelCostBar(
     return;
   }
 
+  // Cursor stores "default" for Auto (we map to "auto" in modelDetector); show $ when any context is Auto
+  if (activeEntries.some((e) => e.model.toLowerCase() === 'auto')) {
+    item.text = '$';
+    item.color = undefined;
+    item.backgroundColor = undefined;
+    item.show();
+    return;
+  }
+
   let maxTierIndex = -1;
   let dollarSigns = '';
 

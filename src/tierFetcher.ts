@@ -21,6 +21,10 @@ export function resolveModel(
   if (modelData[modelId]) {
     return { data: modelData[modelId], multiplier: 1 };
   }
+  const lower = modelId.toLowerCase();
+  if (lower !== modelId && modelData[lower]) {
+    return { data: modelData[lower], multiplier: 1 };
+  }
   for (const [pattern, multiplier] of SUFFIX_MULTIPLIERS) {
     const baseId = modelId.replace(pattern, '');
     if (baseId !== modelId && modelData[baseId]) {
