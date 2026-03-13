@@ -10,3 +10,9 @@ Use semver:
 - Major (`0.1.1` → `1.0.0`): breaking changes
 
 Always update `CHANGELOG.md` in the same commit as the version bump.
+
+## Regenerate model_tiers.json on Every PR
+
+Every PR must include a freshly regenerated `model_tiers.json`. Follow the instructions in `automations/generate-model-tiers.md` exactly — fetch the Cursor pricing page, parse the model table, apply the tier thresholds, and write the output.
+
+If a conversation reveals that the generation logic is wrong or incomplete (e.g. a model is miscategorized, a new naming pattern appears, normalization rules need updating), update `automations/generate-model-tiers.md` to reflect the correct approach before regenerating.
