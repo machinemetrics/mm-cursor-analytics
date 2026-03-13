@@ -2,9 +2,6 @@
 
 ## [0.1.3] - 2026-03-13
 
-### Added
-- GitHub: auto-assign PRs to lauzierj and request review via CODEOWNERS (`.github/workflows/assign-pr.yml`, `.github/CODEOWNERS`).
-
 ### Fixed
 - Auto selection now shows $ (cheap): case-insensitive model lookup and prefer Auto when present so underlying model does not override.
 
