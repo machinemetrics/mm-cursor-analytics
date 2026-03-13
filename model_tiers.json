@@ -29,6 +29,6 @@
   "grok-code": { "tier": "cheap", "output": 1.5 },
   "kimi-k2.5": { "tier": "cheap", "output": 3 },
   "accounts/fireworks/models/kimi-k2-instruct": { "tier": "cheap", "output": 3 },
-  "auto": { "tier": "daily driver", "output": 6 },
+  "auto": { "tier": "cheap", "output": 6 },
   "composer": { "tier": "daily driver", "output": 10 }
 }

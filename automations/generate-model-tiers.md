@@ -49,6 +49,8 @@ Examples:
 
 Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
+**Special cases:** `auto` is included in the Pro plan — always set tier to `cheap` regardless of API rate.
+
 ## Output format
 
 Write to `model_tiers.json` at the repo root. Each model must include both `tier` and `output` (output price per 1M tokens) so the extension can compute effective cost when Max Mode is enabled:
