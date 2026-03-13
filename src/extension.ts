@@ -5,6 +5,63 @@ import { createSpendStatusBar } from './statusBar';
 import { clearSpendCache } from './spendCache';
 import { outputChannel, log } from './logger';
 
+const TIER_ORDER = ['cheap', 'daily driver', 'expensive', 'extremely expensive'];
+
+function tierToDollarSigns(tier: string, multiplier: number, maxMode: boolean): string {
+  // Apply runtime multipliers to effective output cost to pick the right tier
+  const tierIndex = TIER_ORDER.indexOf(tier);
+  if (tierIndex === -1) return '?';
+  const effectiveMultiplier = multiplier * (maxMode ? 1.2 : 1);
+  // Bump tier up if multiplier pushes it over the expensive threshold
+  const bumped = effectiveMultiplier >= 2 ? Math.min(tierIndex + 1, TIER_ORDER.length - 1) : tierIndex;
+  return '$'.repeat(bumped + 1);
+}
+
+function createModelCostBar(): vscode.StatusBarItem {
+  const item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 98);
+  item.tooltip = 'Active model cost tier';
+  item.text = '';
+  return item;
+}
+
+function updateModelCostBar(
+  item: vscode.StatusBarItem,
+  activeEntries: { model: string; maxMode: boolean }[],
+  modelData: Record<string, ModelData>
+): void {
+  if (activeEntries.length === 0 || Object.keys(modelData).length === 0) {
+    item.hide();
+    return;
+  }
+
+  let maxTierIndex = -1;
+  let dollarSigns = '';
+
+  for (const { model, maxMode } of activeEntries) {
+    const resolved = resolveModel(model, modelData);
+    if (!resolved) continue;
+    const tierIndex = TIER_ORDER.indexOf(resolved.data.tier);
+    if (tierIndex > maxTierIndex) {
+      maxTierIndex = tierIndex;
+      dollarSigns = tierToDollarSigns(resolved.data.tier, resolved.multiplier, maxMode);
+    }
+  }
+
+  if (!dollarSigns) {
+    item.hide();
+    return;
+  }
+
+  item.text = dollarSigns;
+  item.color = maxTierIndex >= 2
+    ? new vscode.ThemeColor('statusBarItem.warningBackground')
+    : undefined;
+  item.backgroundColor = maxTierIndex >= 2
+    ? new vscode.ThemeColor('statusBarItem.warningBackground')
+    : undefined;
+  item.show();
+}
+
 const TITLEBAR_KEY = 'titleBar.activeBackground';
 const RED_VALUE = '#cc0000';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -74,6 +131,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   }
 
+  const modelCostBar = createModelCostBar();
+  context.subscriptions.push(modelCostBar);
+
   async function poll(): Promise<void> {
     const modelData = await refreshModelData();
     if (Object.keys(modelData).length === 0) {
@@ -82,6 +142,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     const dbPath = getCursorStateDbPath();
     const activeEntries = await getActiveModelsFromState(dbPath);
+
     const anyExpensive = activeEntries.some(({ model, maxMode }) => {
       const resolved = resolveModel(model, modelData);
       if (!resolved) return false;
@@ -93,6 +154,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     } else {
       restore();
     }
+
+    updateModelCostBar(modelCostBar, activeEntries, modelData);
   }
 
   await poll();

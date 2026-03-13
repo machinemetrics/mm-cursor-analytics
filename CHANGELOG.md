@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.2] - 2026-03-13
+
+### Added
+- Dollar sign indicator in the status bar showing current model cost tier: $ cheap, $$ daily driver, $$$ expensive, $$$$ extremely expensive
+
 ## [0.1.1] - 2026-03-13
 
 ### Changed
