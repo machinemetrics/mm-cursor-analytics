@@ -27,16 +27,16 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 
 - Lowercase
 - Replace spaces with hyphens
-- Replace `.` with `-` (e.g. `4.6` → `4-6`)
-- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4-6-opus-fast`
-- For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path
+- Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
+- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
-- `Claude 4.6 Opus` → `claude-4-6-opus`
-- `Claude 4.6 Opus (Fast mode)` → `claude-4-6-opus-fast`
-- `GPT-5.4` → `gpt-5-4`
-- `Composer 1.5` → `composer-1-5`
-- `Gemini 3.1 Pro` → `gemini-3-1-pro`
+- `Claude 4.6 Opus` → `claude-4.6-opus`
+- `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `GPT-5.4` → `gpt-5.4`
+- `Composer 1.5` → `composer-1.5`
+- `Gemini 3.1 Pro` → `gemini-3.1-pro`
 
 ## Tier thresholds (output price per 1M tokens)
 
@@ -48,6 +48,8 @@ Examples:
 | extremely expensive | ≥ $50 |
 
 Sonnet ($15) = daily driver. Opus ($25+) = expensive.
+
+**Special cases:** `auto` is included in the Pro plan — always set tier to `cheap` regardless of API rate.
 
 ## Output format
 
