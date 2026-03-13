@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.3] - 2026-03-13
+
+### Fixed
+- Auto selection now shows $ (cheap): case-insensitive model lookup and prefer Auto when present so underlying model does not override.
+
 ## [0.1.2] - 2026-03-13
 
 ### Added

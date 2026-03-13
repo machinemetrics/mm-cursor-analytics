@@ -15,14 +15,15 @@ Search for **MM Cursor Expensive Model Indicator** in the Cursor Extensions pane
 
 ## Status Bar
 
-The status bar item shows three metrics:
+The status bar shows spend metrics and a cost indicator:
 
 ```
-MM $0.42 · $12.34 · $0.18↑
-   today   period   max turn
+MM $0.42 · $12.34 · $0.18↑  $$
+   today   period   max turn  current model cost
 ```
 
-Hover for a detailed tooltip including model, token counts, and time of the most expensive turn.
+- **Spend (MM … ↑)**: Today’s spend, billing period spend, and most expensive turn today. Click for refresh/clear; hover for details (model, tokens, time).
+- **Dollar signs ($ to $$$$)**: Cost tier of the currently selected model — $ cheap, $$ daily driver, $$$ expensive, $$$$ extremely expensive. When **Auto** is selected (included in Pro), this shows **$** regardless of which model Auto uses.
 
 ## Configuration
 

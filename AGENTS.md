@@ -15,4 +15,6 @@ Always update `CHANGELOG.md` in the same commit as the version bump.
 
 Every PR must include a freshly regenerated `model_tiers.json`. Follow the instructions in `automations/generate-model-tiers.md` exactly — fetch the Cursor pricing page, parse the model table, apply the tier thresholds, and write the output.
 
+The generated file must include an **`auto`** entry with tier **`cheap`** — Cursor stores the Auto selection as `"default"` in state; the extension maps it to `"auto"` and shows $ when any context is Auto (Pro-included).
+
 If a conversation reveals that the generation logic is wrong or incomplete (e.g. a model is miscategorized, a new naming pattern appears, normalization rules need updating), update `automations/generate-model-tiers.md` to reflect the correct approach before regenerating.
