@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1] - 2026-03-13
+
+### Changed
+- Updated README with Open VSX install instructions and status bar documentation
+- Removed manual build/install steps and reference to external cursor-costs repo
+
 ## [0.1.0] - 2025-03-09
 
 ### Added

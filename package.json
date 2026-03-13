@@ -3,7 +3,7 @@
   "displayName": "MM Cursor Expensive Model Indicator",
   "publisher": "machinemetrics",
   "description": "Turns the title bar red when using an expensive AI model in Cursor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "icon": "images/icon.png",
   "galleryBanner": {
