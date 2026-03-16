@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-03-16
+
+### Changed
+- Regenerated `model_tiers.json` from Cursor's latest models and pricing docs, including updated `lastUpdated` and required `auto` tier metadata.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
