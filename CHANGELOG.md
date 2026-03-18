@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-03-18
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor models/pricing docs, including refreshed output pricing and tier assignments.
+- Kept Auto mapped as `auto` with cheap tier using the current Auto pool output price.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
