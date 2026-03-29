@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4] - 2026-03-29
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor models/pricing docs.
+- Added newly listed models and prices, including `composer-2`, `gpt-5.4-mini`, `gpt-5.4-nano`, and `grok-4.20`.
+- Kept required aliases/special entries for `auto` and `accounts/fireworks/models/kimi-k2-instruct`.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
