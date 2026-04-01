@@ -16,7 +16,8 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 
 ## Parsing
 
-1. Find the table that starts with `| Model | Provider | Input | ...`
+1. Find the "### Model pricing" table by matching a header row that starts with `| Model` and includes the expected columns (`Provider`, `Input`, `Cache write`, `Cache read`, `Output`, `Notes`).  
+   Do **not** require exact pipe-spacing/alignment because the docs may pad columns for readability.
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
