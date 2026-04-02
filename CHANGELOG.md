@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4] - 2026-04-02
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor models and pricing docs.
+- Added new model entries: `composer-2`, `gpt-5.4-mini`, `gpt-5.4-nano`, and `grok-4.20`.
+- Updated `composer` to match the Auto + Composer pool output price ($2.5).
+- Updated `lastUpdated` timestamp and retained `auto` (cheap, output 6).
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
