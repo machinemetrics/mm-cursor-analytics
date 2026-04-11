@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-04-11
+
+### Changed
+- Regenerated `model_tiers.json` from Cursor docs pricing table, including latest model entries and current output prices.
+- Added new model IDs from the table (`composer-2`, `gpt-5.4-mini`, `gpt-5.4-nano`, `grok-4.20`) and removed stale aliases not present in the source table.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
