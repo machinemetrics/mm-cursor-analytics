@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4] - 2026-04-15
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor pricing table.
+- Added newly listed models: Composer 2, GPT-5.4 Mini, GPT-5.4 Nano, and Grok 4.20.
+- Kept the required `auto` model entry with cheap tier and output rate of 6.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
