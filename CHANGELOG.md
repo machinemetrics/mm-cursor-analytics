@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4] - 2026-04-18
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor models/pricing docs.
+- Added newly listed models and pricing updates, including `claude-4.7-opus`, `composer-2`, `gpt-5.4-mini`, `gpt-5.4-nano`, and `grok-4.20`.
+- Updated `composer` alias pricing to match Composer 2 and kept required `auto` mapping as cheap with output rate 6.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
