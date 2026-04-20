@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4] - 2026-04-20
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor models/pricing docs.
+- Added newly listed models and tiers: Claude 4.7 Opus, Composer 2, GPT-5.4 Mini, GPT-5.4 Nano, and Grok 4.20.
+- Kept required `auto` (cheap, output 6) mapping and provider alias `accounts/fireworks/models/kimi-k2-instruct`.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
