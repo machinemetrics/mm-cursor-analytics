@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-04-21
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor models and pricing docs.
+- Added/updated model IDs and prices including Claude 4.7 Opus, Composer 2, GPT-5.4 Mini/Nano, and Grok 4.20.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
