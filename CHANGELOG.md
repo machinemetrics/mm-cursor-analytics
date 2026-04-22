@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-04-22
+
+### Changed
+- Regenerated `model_tiers.json` from the latest Cursor models/pricing docs.
+- Added new model entries from the pricing table: `claude-4.7-opus`, `composer-2`, `gpt-5.4-mini`, `gpt-5.4-nano`, and `grok-4.20`.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
