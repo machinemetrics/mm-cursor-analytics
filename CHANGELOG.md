@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-04-26
+
+### Changed
+- Regenerated model tiers from the current Cursor models and pricing documentation.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
