@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-05-14
+
+### Changed
+- Regenerated model tiers from the current Cursor models and pricing documentation.
+- Added current Composer, Claude 4.7, GPT-5.4/5.5, and Grok model pricing tiers.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
