@@ -29,6 +29,7 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- Normalize Anthropic names where the family appears before the version to the same version-first shape before adding suffixes: `Claude Opus 4.7 (fast mode)` → `claude-4.7-opus-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
@@ -51,6 +52,8 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **`composer`**: Cursor can store Composer as `"composer"`. When `Composer 2` is present, include a `"composer"` alias with the same tier and output as `"composer-2"`.
+- **Kimi provider path**: Cursor can store Kimi as `"accounts/fireworks/models/kimi-k2-instruct"`. When `Kimi K2.5` is present, include that provider-prefixed alias with the same tier and output as `"kimi-k2.5"`.
 
 ## Output format
 
