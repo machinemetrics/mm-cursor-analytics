@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-05-19
+
+### Changed
+- Regenerated model tiers from the current Cursor model pricing table.
+- Documented the Claude Opus 4.7 fast-mode normalization pattern.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
