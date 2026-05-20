@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-05-20
+
+### Changed
+- Regenerated Cursor model tier data from the latest pricing table.
+- Documented Claude Opus fast-mode normalization for reversed display names.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
