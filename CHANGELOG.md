@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-05-21
+
+### Changed
+- Regenerated model tiers from the latest Cursor pricing table, including new Claude, Composer, GPT, and Grok entries.
+- Documented normalization for Anthropic fast-mode rows that list the family before the version.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
