@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-05-22
+
+### Changed
+- Regenerated model tiers from the latest Cursor model pricing table.
+- Documented Claude fast-mode normalization for names with family-before-version ordering.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
