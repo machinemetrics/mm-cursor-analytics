@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-05-23
+
+### Changed
+- Regenerated model tiers from the Cursor models and pricing docs.
+- Added generation guidance for Claude Opus fast-mode aliases and known Cursor state aliases.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
