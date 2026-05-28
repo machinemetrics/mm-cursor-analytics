@@ -16,7 +16,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 
 ## Parsing
 
-1. Find the table that starts with `| Model | Provider | Input | ...`
+1. Find the table whose header cells normalize to `Model | Provider | Input | Cache write | Cache read | Output | Notes`. The Cursor docs pad markdown tables with variable spacing, so compare trimmed cell text instead of matching a literal header string.
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
@@ -29,6 +29,7 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- Normalize Anthropic names that put the family before the version (`Claude Opus 4.7`) to the Cursor state order (`claude-4.7-opus`) before applying suffixes.
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
@@ -51,6 +52,7 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **Known Cursor state aliases**: preserve aliases that Cursor has stored differently than the display-name ID when the docs row is present. Include `composer` as an alias for the current Composer model and `accounts/fireworks/models/kimi-k2-instruct` as an alias for Kimi K2.5.
 
 ## Output format
 
