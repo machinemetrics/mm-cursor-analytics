@@ -20,6 +20,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
+   - **Notes column**: If the notes expose an explicit model ID in backticks for a selectable fast-mode model that is not its own row (for example, `claude-opus-4-8-fast`), include that exact ID with the documented or derivable output rate. For Claude Opus 4.8 fast mode, the notes say it is 3x lower than Opus 4.7 fast mode, so use `$150 / 3 = $50`.
 
 ## Model ID normalization
 
@@ -51,6 +52,7 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **`composer`**: Cursor may store the Composer pool selection without a version suffix. Map `"composer"` to the current Composer pool model (`composer-2.5`) so generic Composer selections stay cheap.
 
 ## Output format
 
@@ -86,5 +88,6 @@ After writing, ensure:
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
 - Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.8 fast mode (`claude-opus-4-8-fast`, $50) is "extremely expensive" when exposed in the notes
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs
