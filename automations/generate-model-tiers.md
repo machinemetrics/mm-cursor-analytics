@@ -30,6 +30,10 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
+- Preserve known Cursor state aliases that are not shown as primary display names in the table:
+  - `accounts/fireworks/models/kimi-k2-instruct` maps to `Kimi K2.5`
+  - `composer` maps to the current Composer pool model (`Composer 2.5`)
+- If the Notes column exposes a concrete Cursor model ID for a pricing variant that is not represented by its own row, add that ID when the note provides an unambiguous output price or pricing relationship. Example: `Claude Opus 4.8` notes list `claude-opus-4-8-fast` and say it is 3x lower than `Claude Opus 4.7 (fast mode)` ($150 output), so add `claude-opus-4-8-fast` with output $50.
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
@@ -37,6 +41,7 @@ Examples:
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
+- `Claude Opus 4.8` → `claude-opus-4.8`
 
 ## Tier thresholds (output price per 1M tokens)
 
