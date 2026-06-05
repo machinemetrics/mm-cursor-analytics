@@ -16,7 +16,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 
 ## Parsing
 
-1. Find the table that starts with `| Model | Provider | Input | ...`
+1. Find the table whose trimmed header cells are `Model | Provider | Input | Cache write | Cache read | Output | Notes`. The markdown table may use padded cells for alignment, so split rows on `|` and trim each cell before matching column names.
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
@@ -29,7 +29,13 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- For newer Opus-family names that Cursor stores with the family before the version, also add the Cursor state alias with a hyphenated version:
+  - `Claude 4.7 Opus` → `claude-4.7-opus`; also add `claude-opus-4-7`
+  - `Claude Opus 4.7 (fast mode)` → `claude-opus-4.7-fast`; also add `claude-opus-4-7-fast`
+  - `Claude Opus 4.8` → `claude-opus-4.8`; also add `claude-opus-4-8`
+- If the Notes column documents an explicit model ID and price relationship for a model that is not a separate table row, add that ID with the derived output price. Example: `claude-opus-4-8-fast` is 3x lower than Opus 4.7 fast mode, so use output `50` when Opus 4.7 fast mode is `150`.
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
+- Preserve known Cursor state aliases that are not separate display names in the pricing table: `composer` for Composer 1 and `accounts/fireworks/models/kimi-k2-instruct` for Kimi K2.5.
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
@@ -86,5 +92,6 @@ After writing, ensure:
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
 - Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.8 has a `claude-opus-4-8` alias and `claude-opus-4-8-fast` is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs
