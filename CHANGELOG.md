@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-06-07
+
+### Changed
+- Regenerated model tiers from Cursor's latest models and pricing docs, including new Claude Opus, GPT, Grok, Gemini, and Composer pricing entries.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed

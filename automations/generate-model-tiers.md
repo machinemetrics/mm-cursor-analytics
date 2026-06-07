@@ -16,7 +16,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 
 ## Parsing
 
-1. Find the table that starts with `| Model | Provider | Input | ...`
+1. Find the table whose trimmed header cells begin with `Model`, `Provider`, `Input`, `Cache write`, `Cache read`, `Output`, `Notes`. Do not depend on exact markdown padding because the docs table may align columns with extra spaces.
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
@@ -29,6 +29,7 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- For new Claude Opus model-page slugs, use Cursor's documented hyphenated Opus slug form: `Claude 4.7 Opus` → `claude-opus-4-7`; `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`; `Claude Opus 4.8` → `claude-opus-4-8`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
@@ -51,6 +52,7 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **`claude-opus-4-8-fast`**: The pricing table references this explicit Cursor model ID in the Claude Opus 4.8 notes, and the Claude Opus 4.8 model page prices it at $50/M output. Include it with tier `extremely expensive`.
 
 ## Output format
 
