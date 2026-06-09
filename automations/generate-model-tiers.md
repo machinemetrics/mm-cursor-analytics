@@ -29,11 +29,14 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- For Claude Opus 4.7+ display names, use Cursor's Anthropic slug order with hyphenated version numbers: `Claude 4.7 Opus` → `claude-opus-4-7`, `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`, `Claude Opus 4.8` → `claude-opus-4-8`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
 - `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude 4.7 Opus` → `claude-opus-4-7`
+- `Claude Opus 4.8` → `claude-opus-4-8`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
