@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-06-14
+
+### Changed
+- Regenerated model tiers from the current Cursor models and pricing page, including new Claude, Composer, Gemini, GPT, and Grok entries.
+- Clarified model tier generation rules for current Claude Opus IDs and compatibility aliases.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
