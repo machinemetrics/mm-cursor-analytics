@@ -47,7 +47,7 @@ function getCursorAppDir(): string {
   if (process.platform === 'win32') {
     return path.join(process.env['LOCALAPPDATA'] ?? '', 'Programs', 'cursor', 'resources', 'app');
   }
-  return path.join(require('os').homedir(), '.local', 'share', 'cursor', 'resources', 'app');
+  return path.join(os.homedir(), '.local', 'share', 'cursor', 'resources', 'app');
 }
 
 function readAccessToken(): Promise<string | null> {
@@ -57,6 +57,7 @@ function readAccessToken(): Promise<string | null> {
   try {
     const sqlitePath = path.join(getCursorAppDir(), 'node_modules', '@vscode', 'sqlite3', 'lib', 'sqlite3');
     log(`sqlite3 path: ${sqlitePath}, exists: ${fs.existsSync(sqlitePath + '.js')}`);
+    // Dynamic require needed — path is resolved at runtime from the Cursor app bundle
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const sqlite3 = require(sqlitePath) as {
       OPEN_READONLY: number;

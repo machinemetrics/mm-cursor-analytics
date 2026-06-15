@@ -8,3 +8,11 @@ scripts/**
 model_tiers.json
 *.md
 !README.md
+!CHANGELOG.md
+node_modules/
+out/test/**
+*.vsix
+package-lock.json
+.circleci/**
+eslint.config.mjs
+automations/**

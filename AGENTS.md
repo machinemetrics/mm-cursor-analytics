@@ -1,5 +1,24 @@
 # Agent Instructions — mm-cursor-analytics
 
+## Version Bump Required
+
+Every PR must increment the `version` field in `package.json`. The CI pipeline enforces this — it will fail if the version is not greater than the currently published version on Open VSX.
+
+Use semver:
+- Patch (`0.1.1` → `0.1.2`): bug fixes, copy changes, minor tweaks
+- Minor (`0.1.1` → `0.2.0`): new features, new UI elements
+- Major (`0.1.1` → `1.0.0`): breaking changes
+
+Always update `CHANGELOG.md` in the same commit as the version bump.
+
+## Regenerate model_tiers.json on Every PR
+
+Every PR must include a freshly regenerated `model_tiers.json`. Follow the instructions in `automations/generate-model-tiers.md` exactly — fetch the Cursor pricing page, parse the model table, apply the tier thresholds, and write the output.
+
+The generated file must include an **`auto`** entry with tier **`cheap`** — Cursor stores the Auto selection as `"default"` in state; the extension maps it to `"auto"` and shows $ when any context is Auto (Pro-included).
+
+If a conversation reveals that the generation logic is wrong or incomplete (e.g. a model is miscategorized, a new naming pattern appears, normalization rules need updating), update `automations/generate-model-tiers.md` to reflect the correct approach before regenerating.
+
 ## Handling models not found in model_tiers.json
 
 The extension logs `[model-id] not found in tiers — skipping` when it reads a model from Cursor's state DB that has no entry in `model_tiers.json`. This means the model's cost is unknown and it won't contribute to the red title bar indicator.

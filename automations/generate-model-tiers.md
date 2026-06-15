@@ -27,9 +27,9 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 
 - Lowercase
 - Replace spaces with hyphens
-- **Preserve `.` in version numbers** — do NOT replace dots with hyphens (e.g. `4.6` stays `4.6`)
+- Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
-- For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path
+- For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
@@ -49,6 +49,9 @@ Examples:
 
 Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
+**Special cases:**
+- **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+
 ## Output format
 
 Write to `model_tiers.json` at the repo root. Each model must include both `tier` and `output` (output price per 1M tokens) so the extension can compute effective cost when Max Mode is enabled:
@@ -61,27 +64,20 @@ Write to `model_tiers.json` at the repo root. Each model must include both `tier
 }
 ```
 
-Example: `"claude-4-5-sonnet": { "tier": "daily driver", "output": 15 }`
+Example: `"claude-4.5-sonnet": { "tier": "daily driver", "output": 15 }`
 
 ## Variant Suffixes and Max Mode
 
-The extension handles cost modifiers at runtime. Do **not** add `-thinking`, `-medium-thinking`, `-high`, or `-high-thinking` variants to `model_tiers.json` — only add the base model ID. The extension strips these suffixes and applies multipliers:
+The extension handles cost modifiers at runtime. Do not add `-thinking`, `-high`, or `-high-thinking` variants to model_tiers.json. The extension strips these suffixes and applies multipliers:
 
-| Suffix | Multiplier |
-|--------|------------|
-| `-medium-thinking` | 3x |
-| `-thinking` | 2x |
-| `-high` | 1.5x |
-| `-high-thinking` | 5x |
-| Max Mode | 1.2x (on top of suffix multiplier) |
+- `-thinking`: 2x (thinking models generate significantly more output tokens)
+- `-high`: 1.5x (high reasoning effort)
+- `-high-thinking`: 3x (combined)
+- Max Mode: 1.2x (on top of suffix multiplier)
 
-Effective output = base output × suffix multiplier × max mode multiplier. **Red bar when effective output ≥ $50.**
+Effective output = base output × suffix multiplier × max mode multiplier. Red bar when effective output ≥ $20.
 
-Examples:
-- `claude-4.6-sonnet-medium-thinking` → base = claude-4.6-sonnet ($15) × 3 = **$45** → no red bar
-- `claude-4.6-sonnet-thinking` → base = claude-4.6-sonnet ($15) × 2 = **$30** → no red bar
-- `claude-4.6-opus-medium-thinking` → base = claude-4.6-opus ($25) × 3 = **$75** → 🔴 red bar
-- `claude-4.6-opus-high-thinking` → base = claude-4.6-opus ($25) × 5 = **$125** → 🔴 red bar
+Example: `claude-4.6-sonnet-thinking` → base = claude-4.6-sonnet ($15) × 2 = $30 → expensive.
 
 ## Verification
 
@@ -90,6 +86,5 @@ After writing, ensure:
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
 - Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs
-- No variant suffixes (`-thinking`, `-medium-thinking`, `-high`, `-high-thinking`) — base model IDs only
-- Model IDs use the same format as `model_tiers.json` (periods preserved in version numbers)
