@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-06-17
+
+### Changed
+- Regenerated model tier pricing from Cursor docs, including newly listed Claude, Composer, Gemini, GPT, Grok, and Kimi models.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
