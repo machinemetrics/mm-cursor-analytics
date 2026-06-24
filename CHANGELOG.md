@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-06-24
+
+### Changed
+- Regenerated model tiers from the current Cursor models and pricing documentation.
+- Documented Claude Opus model ID normalization for newer display-name ordering.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
