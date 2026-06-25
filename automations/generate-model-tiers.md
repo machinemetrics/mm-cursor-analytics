@@ -16,7 +16,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 
 ## Parsing
 
-1. Find the table that starts with `| Model | Provider | Input | ...`
+1. Find the table whose trimmed header columns start with `Model | Provider | Input | Cache write | Cache read | Output`. The markdown source may pad columns with extra spaces for alignment.
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
@@ -28,12 +28,13 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Lowercase
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
-- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- Remove parentheticals like `(Fast mode)` or `(fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
 - `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude Opus 4.7 (fast mode)` → `claude-opus-4.7-fast`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
