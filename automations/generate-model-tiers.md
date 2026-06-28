@@ -20,6 +20,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
+   - **Notes column**: If notes name a separately selectable **Fast mode** model ID in backticks and provide enough pricing information, add that exact model ID in addition to the normalized display-name ID. Example: the `Claude Opus 4.8` note says Fast mode (`claude-opus-4-8-fast`) is 3x lower per-token pricing than Opus 4.7 fast mode ($150 output), so add `claude-opus-4-8-fast` with output `$50`.
 
 ## Model ID normalization
 
@@ -37,6 +38,7 @@ Examples:
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
+- `Claude Opus 4.8` fast mode note → `claude-opus-4-8-fast`
 
 ## Tier thresholds (output price per 1M tokens)
 
