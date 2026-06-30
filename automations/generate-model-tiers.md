@@ -20,6 +20,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
+   - **Notes column**: Preserve the text for rows that document explicit Cursor model IDs in backticks or describe a fast-mode price relationship.
 
 ## Model ID normalization
 
@@ -28,12 +29,16 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Lowercase
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
-- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- Prefer any explicit Cursor model ID documented in backticks in the Notes column, unless it is only a runtime suffix variant covered by the "Variant Suffixes and Max Mode" rules below
+- New Claude Opus display names use Cursor IDs with hyphenated version components: `Claude Opus 4.8` → `claude-opus-4-8`
+- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
+- For Composer 2.5, also add a `composer` alias with the same tier/output because Cursor may store the Composer pool selection without the version suffix
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
-- `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`
+- `Claude Opus 4.8` → `claude-opus-4-8`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
@@ -51,6 +56,7 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **Claude Opus 4.8 fast mode**: The pricing table documents `claude-opus-4-8-fast` in the Claude Opus 4.8 notes and says it is 3x lower per-token pricing than Claude Opus 4.7 fast mode. Include `claude-opus-4-8-fast` with output `50` when Claude Opus 4.7 fast mode is listed at output `150`.
 
 ## Output format
 
@@ -72,7 +78,12 @@ The extension handles cost modifiers at runtime. Do not add `-thinking`, `-high`
 
 - `-thinking`: 2x (thinking models generate significantly more output tokens)
 - `-high`: 1.5x (high reasoning effort)
-- `-high-thinking`: 3x (combined)
+- `-high-thinking` or `-thinking-high`: 3x (combined)
+- Variants before `-fast` map back to the priced fast entry:
+  - `-thinking-fast`: 2x against the `-fast` base
+  - `-high-fast`: 1.5x against the `-fast` base
+  - `-thinking-high-fast` or `-high-thinking-fast`: 3x against the `-fast` base
+  - `-low-fast`: 1x against the `-fast` base
 - Max Mode: 1.2x (on top of suffix multiplier)
 
 Effective output = base output × suffix multiplier × max mode multiplier. Red bar when effective output ≥ $20.
@@ -85,6 +96,7 @@ After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 (fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.8 fast mode ($50) is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs

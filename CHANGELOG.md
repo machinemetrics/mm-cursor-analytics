@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-06-30
+
+### Changed
+- Regenerated model tiers from the latest Cursor models and pricing documentation.
+- Added support for resolving reasoning variants that appear before `-fast` model suffixes.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed

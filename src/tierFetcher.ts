@@ -8,28 +8,45 @@ export interface ModelData {
 const EXPENSIVE_TIER_THRESHOLD = 20; // $/1M tokens
 const MAX_MODE_MULTIPLIER = 1.2;
 
-const SUFFIX_MULTIPLIERS: [RegExp, number][] = [
-  [/-high-thinking$/, 3],
-  [/-thinking$/, 2],
-  [/-high$/, 1.5],
+const VARIANT_SUFFIXES: [RegExp, string, number][] = [
+  [/-high-thinking-fast$/, '-fast', 3],
+  [/-thinking-high-fast$/, '-fast', 3],
+  [/-thinking-fast$/, '-fast', 2],
+  [/-high-fast$/, '-fast', 1.5],
+  [/-low-fast$/, '-fast', 1],
+  [/-high-thinking$/, '', 3],
+  [/-thinking-high$/, '', 3],
+  [/-thinking$/, '', 2],
+  [/-high$/, '', 1.5],
+  [/-low$/, '', 1],
 ];
 
-export function resolveModel(
+function resolveModelId(
   modelId: string,
   modelData: Record<string, ModelData>
 ): { data: ModelData; multiplier: number } | null {
   if (modelData[modelId]) {
     return { data: modelData[modelId], multiplier: 1 };
   }
-  const lower = modelId.toLowerCase();
-  if (lower !== modelId && modelData[lower]) {
-    return { data: modelData[lower], multiplier: 1 };
-  }
-  for (const [pattern, multiplier] of SUFFIX_MULTIPLIERS) {
-    const baseId = modelId.replace(pattern, '');
+  for (const [pattern, replacement, multiplier] of VARIANT_SUFFIXES) {
+    const baseId = modelId.replace(pattern, replacement);
     if (baseId !== modelId && modelData[baseId]) {
       return { data: modelData[baseId], multiplier };
     }
+  }
+  return null;
+}
+
+export function resolveModel(
+  modelId: string,
+  modelData: Record<string, ModelData>
+): { data: ModelData; multiplier: number } | null {
+  const resolved = resolveModelId(modelId, modelData);
+  if (resolved) return resolved;
+
+  const lower = modelId.toLowerCase();
+  if (lower !== modelId) {
+    return resolveModelId(lower, modelData);
   }
   return null;
 }
