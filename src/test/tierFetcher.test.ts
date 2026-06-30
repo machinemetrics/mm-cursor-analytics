@@ -5,7 +5,9 @@ import { resolveModel, isExpensiveModel, type ModelData } from '../tierFetcher';
 const modelData: Record<string, ModelData> = {
   'claude-3-5-sonnet':  { tier: 'expensive', output: 15 },
   'claude-3-7-sonnet':  { tier: 'expensive', output: 15 },
+  'claude-opus-4-7-fast': { tier: 'extremely expensive', output: 150 },
   'gpt-4o':             { tier: 'expensive', output: 15 },
+  'gpt-5-fast':         { tier: 'expensive', output: 20 },
   'gpt-4o-mini':        { tier: 'cheap',     output: 0.6 },
   'claude-3-haiku':     { tier: 'cheap',     output: 1.25 },
   'o3':                 { tier: 'expensive', output: 40 },
@@ -32,10 +34,44 @@ describe('resolveModel', () => {
     assert.equal(result.multiplier, 3);
   });
 
+  it('resolves a -thinking-high suffix variant', () => {
+    const result = resolveModel('claude-3-5-sonnet-thinking-high', modelData);
+    assert.ok(result);
+    assert.equal(result.multiplier, 3);
+  });
+
   it('resolves a -high suffix variant', () => {
     const result = resolveModel('gpt-4o-high', modelData);
     assert.ok(result);
     assert.equal(result.multiplier, 1.5);
+  });
+
+  it('resolves reasoning variants before a -fast suffix', () => {
+    const result = resolveModel('gpt-5-high-fast', modelData);
+    assert.ok(result);
+    assert.equal(result.multiplier, 1.5);
+    assert.equal(result.data.output, 20);
+  });
+
+  it('resolves low reasoning fast variants without a cost multiplier', () => {
+    const result = resolveModel('gpt-5-low-fast', modelData);
+    assert.ok(result);
+    assert.equal(result.multiplier, 1);
+    assert.equal(result.data.output, 20);
+  });
+
+  it('resolves combined thinking and high variants before a -fast suffix', () => {
+    const result = resolveModel('claude-opus-4-7-thinking-high-fast', modelData);
+    assert.ok(result);
+    assert.equal(result.multiplier, 3);
+    assert.equal(result.data.output, 150);
+  });
+
+  it('resolves suffix variants case-insensitively', () => {
+    const result = resolveModel('GPT-5-HIGH-FAST', modelData);
+    assert.ok(result);
+    assert.equal(result.multiplier, 1.5);
+    assert.equal(result.data.output, 20);
   });
 
   it('returns null for unknown model', () => {
