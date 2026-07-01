@@ -29,6 +29,11 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- For Claude 4.7+ and Claude 5+ display names, newer family-first display names, or rows where Cursor documents a hyphenated Claude ID in the notes, use the Cursor-stored family-first ID and replace version dots with hyphens:
+  - `Claude 4.7 Opus` → `claude-opus-4-7`
+  - `Claude Opus 4.8` → `claude-opus-4-8`
+  - `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`
+  - `Claude Sonnet 5` → `claude-sonnet-5`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
@@ -51,6 +56,7 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **`composer`**: Cursor has historically stored the Composer selection as `"composer"` in state. Always include a `"composer"` alias that matches the current Composer model entry (for example, Composer 2.5 when that is the active Composer model in the docs table).
 
 ## Output format
 
@@ -85,6 +91,7 @@ After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 (fast mode) ($150) is "extremely expensive"
+- Claude Fable 5 ($50) is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs

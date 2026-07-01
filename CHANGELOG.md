@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-01
+
+### Changed
+- Regenerated model tiers from the current Cursor models and pricing documentation.
+- Updated model tier generation guidance for newer Claude family-first model IDs.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
