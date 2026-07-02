@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-02
+
+### Changed
+- Regenerated model tiers from the current Cursor models and pricing table.
+- Documented the newer Anthropic Claude Opus model ID normalization pattern.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed

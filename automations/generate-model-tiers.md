@@ -20,6 +20,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
+   - **Notes column fast modes**: If notes identify a selectable fast-mode model ID and provide an exact multiplier or relative output price, add that fast-mode ID as a separate entry because the extension does not strip `-fast` at runtime. Examples: `GPT-5.4` notes say fast mode has 2x pricing, so add `gpt-5.4-fast` with output `30`; `Claude Opus 4.8` notes say `claude-opus-4-8-fast` is 3x lower than `Claude Opus 4.7 (fast mode)`, so add `claude-opus-4-8-fast` with output `50`. Do not infer a fast-mode entry when notes say only "higher rates" without an exact amount or multiplier.
 
 ## Model ID normalization
 
@@ -30,6 +31,7 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
+- For newer Anthropic display names where the family precedes the version (`Claude Opus 4.8`, `Claude Opus 4.7 (fast mode)`), use Cursor's hyphenated slug style for the version: `Claude Opus 4.8` → `claude-opus-4-8`, `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`. Backticked model IDs in the docs notes (for example `claude-opus-4-8-fast`) confirm this slug style.
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
