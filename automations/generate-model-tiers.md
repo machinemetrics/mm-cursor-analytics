@@ -20,6 +20,7 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 2. For each data row (skip the header separator `| --- | --- | ...`):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
+   - **Notes column**: Use documented backticked Cursor model IDs only when they add a non-thinking/non-high variant that the display name does not capture (for example, a `-fast` variant). Raw markdown may escape inline-code backticks as ``\`model-id\```; handle both escaped and unescaped backticks. If notes state a different exact or relative output price for that ID, use that documented price.
 
 ## Model ID normalization
 
@@ -30,10 +31,14 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
+- For Anthropic's newer Opus 4.7+ names, use Cursor's documented slug style regardless of whether the display name is version-first or provider-ordered: `Claude 4.7 Opus` / `Claude Opus 4.7` → `claude-opus-4-7`, `Claude Opus 4.8` → `claude-opus-4-8`, and fast variants like `claude-opus-4-7-fast`
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
 - `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude 4.7 Opus` → `claude-opus-4-7`
+- `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`
+- `Claude Opus 4.8` → `claude-opus-4-8`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
@@ -85,6 +90,6 @@ After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 fast mode ($150) is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs
