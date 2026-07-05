@@ -30,10 +30,13 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
 - Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
+- For Claude Opus models using Cursor's newer family-first slugs, normalize to the stored hyphenated version form when the docs indicate that naming pattern. Examples: `Claude 4.7 Opus` → `claude-opus-4-7`; `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`; `Claude Opus 4.8` → `claude-opus-4-8`
+- If a table row's notes include an explicit Cursor model ID in backticks, add that exact ID when it names a selectable model or mode described by the row. If the notes describe pricing for a distinct fast-mode ID, add that fast-mode ID using the pricing stated in the notes.
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
 - `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude Opus 4.8` → `claude-opus-4-8`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
@@ -51,6 +54,7 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **`composer`**: Cursor may store the Composer selection as `"composer"` instead of the versioned model ID. Always include a `"composer"` entry using the current Composer pool model's output rate.
 
 ## Output format
 
@@ -85,6 +89,8 @@ After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.8 Fast (`claude-opus-4-8-fast`, $50) is "extremely expensive" when present in the notes
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
+- A `"composer"` entry exists with the current Composer pool model tier
 - No duplicate model IDs
