@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-07
+
+### Changed
+- Regenerated Cursor model tier data from the current models and pricing documentation.
+- Updated model tier generation instructions for the current markdown table format and fast-mode verification row.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
