@@ -27,13 +27,14 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 
 - Lowercase
 - Replace spaces with hyphens
-- Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
-- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- Keep `.` in version numbers by default (e.g. `4.6` stays `4.6`, not `4-6`)
+- Prefer exact Cursor model IDs shown in the docs when available, including IDs in the Notes column. For Claude product-name-first models, Cursor uses hyphenated version components: `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`; `Claude Opus 4.8` → `claude-opus-4-8`
+- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude Opus 4.7 (fast mode)` → `claude-opus-4-7-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
-- `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude Opus 4.7 (Fast mode)` → `claude-opus-4-7-fast`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
@@ -51,6 +52,8 @@ Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
 - **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **`composer`**: Cursor can store the Composer selection as `"composer"`. Include a `"composer"` alias using the current Composer pool model output rate (Composer 2.5).
+- **Notes-only exact IDs**: If the Notes column names an exact fast-mode ID and gives unambiguous relative pricing, include that ID. Example: `claude-opus-4-8-fast` is 3x lower than Claude Opus 4.7 fast mode, so use output `50`.
 
 ## Output format
 
@@ -85,6 +88,7 @@ After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.8 Fast (`claude-opus-4-8-fast`, $50) is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs

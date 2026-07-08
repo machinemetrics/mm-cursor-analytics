@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-08
+
+### Changed
+- Regenerated model tiers from Cursor's current models and pricing docs.
+- Updated model tier generation instructions for current Claude fast-mode naming and Composer alias handling.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
