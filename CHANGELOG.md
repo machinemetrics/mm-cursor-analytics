@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-18
+
+### Changed
+- Regenerated model tiers from the latest Cursor pricing table.
+- Updated generation verification for the current Claude fast-mode model.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
