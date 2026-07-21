@@ -85,6 +85,6 @@ After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 (fast mode) ($150) is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs
