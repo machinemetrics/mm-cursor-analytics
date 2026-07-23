@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-23
+
+### Changed
+- Regenerated model tiers from the latest Cursor pricing documentation.
+- Updated the generation instructions for the current fast-mode Opus naming.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
