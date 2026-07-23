@@ -16,8 +16,8 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 
 ## Parsing
 
-1. Find the table that starts with `| Model | Provider | Input | ...`
-2. For each data row (skip the header separator `| --- | --- | ...`):
+1. Split pipe-delimited rows into cells and trim whitespace from every cell. Find the table whose trimmed header cells start with `Model`, `Provider`, `Input`, and whose sixth cell is `Output`. (The raw Markdown may pad cells with spaces, so do not match the header as an exact string.)
+2. For each data row (skip the header separator row):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
 
@@ -28,12 +28,12 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Lowercase
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
-- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- Remove parentheticals like `(fast mode)` (case-insensitive) and append `-fast` to the base name: `Claude Opus 4.7 (fast mode)` → `claude-opus-4.7-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
-- `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude Opus 4.7 (fast mode)` → `claude-opus-4.7-fast`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
@@ -85,6 +85,6 @@ After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
 - All models from the Cursor docs table are present
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 (fast mode) ($150) is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
 - No duplicate model IDs
