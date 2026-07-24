@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-07-24
+
+### Changed
+- Regenerated model tiers from the latest Cursor pricing documentation (new models including Claude Opus 4.8, Claude Sonnet 5, Composer 2.5, GPT-5.5/5.6, Grok 4.5).
+- Updated generation instructions for current fast-mode Opus naming and Auto Cost → `auto` mapping.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
