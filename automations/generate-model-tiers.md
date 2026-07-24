@@ -16,8 +16,8 @@ Fetch the raw markdown. The page contains a table under "### Model pricing" with
 
 ## Parsing
 
-1. Find the table that starts with `| Model | Provider | Input | ...`
-2. For each data row (skip the header separator `| --- | --- | ...`):
+1. Split pipe-delimited rows into cells and trim whitespace from every cell. Find the table whose trimmed header cells start with `Model`, `Provider`, `Input`, and whose sixth cell is `Output`. (The raw Markdown may pad cells with spaces, so do not match the header as an exact string.)
+2. For each data row (skip the header separator row):
    - **Model column**: Extract the display name. Format is either `[Display Name](url)` or plain text. For markdown links, use the text inside the brackets. Examples: `[Claude 4.6 Opus](https://...)` → `Claude 4.6 Opus`; `Kimi K2.5` → `Kimi K2.5`
    - **Output column**: Parse the dollar amount. Format is `$X` or `$X.Y`. Use regex `\$(\d+(?:\.\d+)?)` to extract the number. If the cell is `-` or empty, treat as 0.
 
@@ -28,15 +28,17 @@ Convert display names to model IDs that match what Cursor stores in state.vscdb.
 - Lowercase
 - Replace spaces with hyphens
 - Keep `.` in version numbers (e.g. `4.6` stays `4.6`, not `4-6`)
-- Remove parentheticals like `(Fast mode)` and append `-fast` to the base name: `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- Remove parentheticals like `(fast mode)` (case-insensitive) and append `-fast` to the base name: `Claude Opus 4.7 (fast mode)` → `claude-opus-4.7-fast`
 - For provider-prefixed models like `accounts/fireworks/models/kimi-k2-instruct`, keep the full path; also add the simple normalized ID
+- **Do not** emit a separate `auto-cost` ID for the table row `Auto Cost`. Map it to `auto` (see Special cases).
 
 Examples:
 - `Claude 4.6 Opus` → `claude-4.6-opus`
-- `Claude 4.6 Opus (Fast mode)` → `claude-4.6-opus-fast`
+- `Claude Opus 4.7 (fast mode)` → `claude-opus-4.7-fast`
 - `GPT-5.4` → `gpt-5.4`
 - `Composer 1.5` → `composer-1.5`
 - `Gemini 3.1 Pro` → `gemini-3.1-pro`
+- `Auto Cost` → `auto` (special case; not `auto-cost`)
 
 ## Tier thresholds (output price per 1M tokens)
 
@@ -50,7 +52,7 @@ Examples:
 Sonnet ($15) = daily driver. Opus ($25+) = expensive.
 
 **Special cases:**
-- **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan). Use the Auto pool output rate (e.g. 6) for the `output` field.
+- **`auto`**: Cursor stores `"default"` in state when the user selects Auto; the extension maps it to `"auto"`. The pricing table row may be labeled `Auto Cost`. Always include an `"auto"` entry with tier `cheap` (Auto is included in the Pro plan) — do not classify Auto by the normal dollar thresholds and do not add `auto-cost`. Use the Auto pool output rate (e.g. 6) for the `output` field.
 
 ## Output format
 
@@ -83,8 +85,9 @@ Example: `claude-4.6-sonnet-thinking` → base = claude-4.6-sonnet ($15) × 2 = 
 
 After writing, ensure:
 - `lastUpdated` is set to the current time in ISO 8601 format
-- All models from the Cursor docs table are present
+- All models from the Cursor docs table are present (with `Auto Cost` represented as `auto`)
 - Claude 4.6 Opus ($25) is "expensive"
-- Claude 4.6 Opus (Fast mode) ($150) is "extremely expensive"
+- Claude Opus 4.7 (fast mode) ($150) is "extremely expensive"
 - An `"auto"` entry exists with tier `"cheap"` (Cursor stores Auto as "default"; extension maps to "auto")
+- No `auto-cost` entry
 - No duplicate model IDs
