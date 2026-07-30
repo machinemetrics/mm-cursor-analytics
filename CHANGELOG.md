@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-07-30
+
+### Changed
+- Regenerated model tiers from Cursor pricing docs (includes Kimi K3, Cursor Models cards for Grok 4.5 / Composer 2.5, and Auto Cost → auto)
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
