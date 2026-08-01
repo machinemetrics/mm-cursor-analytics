@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-08-01
+
+### Changed
+- Regenerated `model_tiers.json` from Cursor models & pricing (Other Models table plus Cursor Models / Auto Cost catalog): 43 models including Grok 4.5, Composer 2.5, Claude Opus/Sonnet 5 family, GPT-5.5/5.6, and Kimi K3
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
