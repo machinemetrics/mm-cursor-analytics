@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-08-03
+
+### Changed
+- Regenerated model tiers from current Cursor pricing (Other Models table + Cursor Models / Auto Cost cards)
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
