@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-08-09
+
+### Changed
+- Regenerated `model_tiers.json` from Cursor docs pricing (Other Models table + Cursor Models / Auto Cost catalog)
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
