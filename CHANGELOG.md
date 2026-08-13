@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-08-13
+
+### Changed
+- Regenerated `model_tiers.json` from current Cursor models and pricing (Cursor Models table including Grok 4.6 and Fast variants, Other Models table, and Auto Cost)
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
