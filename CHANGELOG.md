@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-08-18
+
+### Changed
+- Regenerated `model_tiers.json` from current Cursor models and pricing (added Gemini 3.7 Flash, Grok 4.6, Composer 2.5, and other current models; Claude Sonnet 5 output $15 → $10)
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
