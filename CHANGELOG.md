@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-09-18
+
+### Changed
+- Regenerated `model_tiers.json` from current Cursor models and pricing (50 markdown rows + auto; no list-price or model-row changes vs 2026-09-17; Muse Spark 1.3 at $4.25 cheap; includes Gemini 3.8 Flash at $3.5, Grok 4.6, Composer 2.5, Gemini 3.7 Flash, Claude Fable 5.1, Claude Sonnet 5 at $10, Grok 4.5 Fast at $18, GPT-5.6 Sol promotional output $20)
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
