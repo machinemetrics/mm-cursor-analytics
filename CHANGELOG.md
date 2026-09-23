@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-09-23
+
+### Changed
+- Regenerated `model_tiers.json` from current Cursor models and pricing (55 markdown rows + 6 catalog id aliases + auto). Added Grok 4.7, Grok 4.7 Fast, Grok 4.7 500k (`grok-4.7-500k` and `grok-4.7-long`), Grok 4.7 500k Fast (`grok-4.7-500k-fast` and `grok-4.7-fast-long`), and Claude Opus 5.5 (`claude-opus-5.5` and `claude-opus-5-5` at $20, expensive). No list-price changes for models already listed on 2026-09-21.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
