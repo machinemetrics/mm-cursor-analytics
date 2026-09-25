@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-09-25
+
+### Changed
+- Regenerated model tiers from the current Cursor pricing page so Grok 4.7, Composer 2.5, Claude Opus 5.5, GPT-5.6, and other current models show the right cost.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
