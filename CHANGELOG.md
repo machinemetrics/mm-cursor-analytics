@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-09-26
+
+### Changed
+- Model cost tiers now follow current Cursor pricing, including Opus 5.5, Fable, Grok 4.7, Composer 2.5, and GPT-5.6.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
