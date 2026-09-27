@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-09-27
+
+### Changed
+- Regenerated model tiers from the current Cursor pricing page, including Grok 4.5–4.7, Composer 2.5, Claude Opus/Sonnet/Fable, GPT-5.4–5.6, Gemini 3.x, and Muse Spark 1.3
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
