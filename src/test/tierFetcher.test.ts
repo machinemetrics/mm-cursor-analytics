@@ -47,6 +47,77 @@ describe('resolveModel', () => {
     const result = resolveModel('nonexistent-thinking', modelData);
     assert.equal(result, null);
   });
+
+  it('resolves a -thinking-high suffix variant', () => {
+    const result = resolveModel('claude-3-5-sonnet-thinking-high', modelData);
+    assert.ok(result);
+    assert.equal(result.multiplier, 3);
+    assert.equal(result.data.output, 15);
+  });
+
+  it('keeps an exact id that ends with -max', () => {
+    const data = {
+      ...modelData,
+      'gpt-5.1-codex': { tier: 'daily driver', output: 14 },
+      'gpt-5.1-codex-max': { tier: 'daily driver', output: 10 },
+    };
+    const result = resolveModel('gpt-5.1-codex-max', data);
+    assert.ok(result);
+    assert.equal(result.multiplier, 1);
+    assert.equal(result.data.output, 10);
+
+    const fast = resolveModel('gpt-5.1-codex-max-fast', data);
+    assert.ok(fast);
+    assert.equal(fast.multiplier, 1);
+    assert.equal(fast.data.output, 10);
+  });
+
+  it('resolves effort before a fast variant', () => {
+    const data = {
+      ...modelData,
+      'claude-opus-5-5': { tier: 'expensive', output: 20 },
+      'claude-opus-5-5-fast': { tier: 'expensive', output: 40 },
+    };
+    const result = resolveModel('claude-opus-5-5-high-fast', data);
+    assert.ok(result);
+    assert.equal(result.data.output, 40);
+    assert.equal(result.multiplier, 1.5);
+
+    const xhigh = resolveModel('claude-opus-5-5-xhigh', data);
+    assert.ok(xhigh);
+    assert.equal(xhigh.data.output, 20);
+    assert.equal(xhigh.multiplier, 1);
+  });
+
+  it('resolves bracket parameters', () => {
+    const data = {
+      ...modelData,
+      'composer-2.5': { tier: 'cheap', output: 2.5 },
+      'composer-2.5-fast': { tier: 'daily driver', output: 15 },
+      'claude-opus-5': { tier: 'expensive', output: 25 },
+    };
+    const fast = resolveModel('composer-2.5[fast=true]', data);
+    assert.ok(fast);
+    assert.equal(fast.data.output, 15);
+    assert.equal(fast.multiplier, 1);
+
+    const standard = resolveModel('composer-2.5[fast=false]', data);
+    assert.ok(standard);
+    assert.equal(standard.data.output, 2.5);
+
+    const effort = resolveModel('claude-opus-5[effort=high,thinking=true]', data);
+    assert.ok(effort);
+    assert.equal(effort.data.output, 25);
+    assert.equal(effort.multiplier, 3);
+  });
+
+  it('maps auto-smart to the auto entry', () => {
+    const data = { ...modelData, auto: { tier: 'cheap', output: 6 } };
+    const result = resolveModel('auto-smart', data);
+    assert.ok(result);
+    assert.equal(result.data.tier, 'cheap');
+    assert.equal(result.data.output, 6);
+  });
 });
 
 describe('isExpensiveModel', () => {
