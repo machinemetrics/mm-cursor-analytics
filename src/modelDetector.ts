@@ -102,8 +102,14 @@ export async function getActiveModelsFromState(dbPath: string): Promise<ModelEnt
       const modelName = obj?.modelName ?? obj?.model;
       const maxMode = obj?.maxMode === true;
       if (typeof modelName !== 'string' || !modelName) continue;
-      // Cursor stores "default" when user selected Auto; we map to "auto" for tier lookup
-      entries.push({ model: modelName === 'default' ? 'auto' : modelName, maxMode });
+      // Cursor stores "default" for Auto and "auto-smart" for Cursor Router.
+      // Both map to "auto" so the indicator stays on the Pro-included $ tier.
+      const normalized = modelName.toLowerCase();
+      const model =
+        normalized === 'default' || normalized === 'auto' || normalized === 'auto-smart'
+          ? 'auto'
+          : modelName;
+      entries.push({ model, maxMode });
     }
     return entries;
   } catch {
