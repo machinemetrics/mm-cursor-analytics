@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-10-07
+
+### Fixed
+- The cost indicator now recognizes current Cursor models, including Claude Sonnet 5.5, GLM 5.3, Kimi K3, Grok, Composer 2.5, and GPT-5.6, and shows the right $ level for the one you have selected.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
