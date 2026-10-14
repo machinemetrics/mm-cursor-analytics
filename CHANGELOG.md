@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-10-14
+
+### Fixed
+- The cost indicator now recognizes current Cursor models, including Gemini 4 Argon, fast mode, and effort levels, and shows the right $ level for the model you have selected.
+
 ## [0.1.3] - 2026-03-13
 
 ### Fixed
